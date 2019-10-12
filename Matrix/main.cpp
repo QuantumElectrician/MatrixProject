@@ -1,3 +1,7 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+
 //
 //  main.cpp
 //  Matrix
@@ -16,11 +20,25 @@ using namespace std;
 
 int main(int argc, const char * argv[])
 {
-    //создание матрицы 2*2
-    Matrix<int> MyMatrix(2,2);
-    // присвоение матрице значений одним действием {{1,2},{3,4}}
-    cin >> MyMatrix;
-    cout << MyMatrix;
+    const int SIZE = 2;
+    //создание матриц
+    Matrix<int> MyMatrix(SIZE,SIZE);
+    Matrix<int> MyMatrix1(SIZE,SIZE);
+    Matrix<int> Result(SIZE,SIZE);
+    // присвоение матрице значений одним действием {{1,2},{3,4},{5,6},{7,8}}
+    //cin >> MyMatrix;
+    
+    for (int i = 1; i <= SIZE; i++)
+    {
+        setValue(5, 1, i, MyMatrix1);
+    }
+
+    MyMatrix = MyMatrix1;
+    transpose_block_SSE4x4(MyMatrix1, Result);
+    cout << "Original matrix: \n"<< MyMatrix << "Transposed matrix: \n" << Result;
+    
+    //cout << Transpose(MyMatrix);
+    
     //MyMatrix = {{1,2},{3,4}};
     //Matrix<int> MyMatrix1(10, 10);
 
@@ -34,7 +52,7 @@ int main(int argc, const char * argv[])
     
     //инициализация элемента [i][j] по запросу
     //setValue(5, 1, 1, MyMatrix);
-    //setValue(3, 1, 1, MyMatrix1);
+    //cout << MyMatrix;
     
     //print(MyMatrix);
     //MyMatrix1 += MyMatrix;

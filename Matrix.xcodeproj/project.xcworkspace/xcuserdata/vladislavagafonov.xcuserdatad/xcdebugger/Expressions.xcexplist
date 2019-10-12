@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "Matrix&lt;int&gt;::operator=(Matrix&lt;int&gt; const&amp;):Definition.hpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "this-&gt;value[i][j]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Matrix&lt;int&gt;::Matrix(int, int):Definition.hpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "value[10][10]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Matrix&lt;int&gt;::print():Definition.hpp">
+      </ContextState>
+      <ContextState
+         contextName = "std::__1::basic_istream&lt;char, std::__1::char_traits&lt;char&gt; &gt;&amp; operator&gt;&gt;&lt;int&gt;(std::__1::basic_istream&lt;char, std::__1::char_traits&lt;char&gt; &gt;&amp;, Matrix&lt;int&gt;&amp;):Definition.hpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "current">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "main:main.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "MyMatrix.value[0][0]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "void print&lt;int&gt;(Matrix&lt;int&gt; const&amp;):Definition.hpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "value[2][2]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "std::__1::basic_ostream&lt;char, std::__1::char_traits&lt;char&gt; &gt;&amp; operator&lt;&lt;&lt;int&gt;(std::__1::basic_ostream&lt;char, std::__1::char_traits&lt;char&gt; &gt;&amp;, Matrix&lt;int&gt; const&amp;):Definition.hpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "Target.value[4][6]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Matrix&lt;float&gt;&amp; Transpose&lt;float&gt;(Matrix&lt;float&gt;&amp;):Definition.hpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "Target.value[2][0]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "void transpose4x4_SSE&lt;int&gt;(Matrix&lt;int&gt;&amp;, Matrix&lt;int&gt;&amp;, int, int, int, int):Definition.hpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "Target.value[3][0]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
