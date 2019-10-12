@@ -50,10 +50,13 @@ public:
     friend void resize( Matrix < V >& Target, const int newStringNumber,const int newColumnNumber );
     
     template < class V >
-    friend inline void transpose4x4_SSE(Matrix < V >& Target, Matrix < V >& Target1,
+    friend inline void transpose4x4_SSE(Matrix < V >& Target, Matrix < V >& Result,
                                          int lda, int ldb, int costyl1, int costyl2);
     template < class V >
-    friend inline void transpose_block_SSE4x4(Matrix < V >& Target, Matrix < V >& Target1);
+    friend inline void transpose2Arg(Matrix < V >& Target, Matrix < V >& Result);
+    
+    template < class V >
+    friend inline void transpose1Arg(Matrix < V >& Target);
     
     
     
@@ -66,7 +69,7 @@ public:
     Matrix < TYPE >& operator - (const Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator += (const Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator -= (const Matrix < TYPE > &rhs);
-    Matrix < TYPE >& operator * (const Matrix < TYPE > &rhs);
+    Matrix < TYPE >& operator * (Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator *= (const Matrix < TYPE > &rhs);
     
     
@@ -278,6 +281,8 @@ void resize( Matrix < V >& Target, const int newStringNumber,const int newColumn
     Target.StringNumber = newStringNumber;
 }
 
+///тут проблема с тем, что левый аргумент + тоже меняется
+///как будто оператор унарный
 template < class TYPE >
 Matrix < TYPE >& Matrix < TYPE >::operator + (const Matrix < TYPE > &rhs)
 {
@@ -348,10 +353,17 @@ inline void transpose4x4_SSE(Matrix < V >& Target, Matrix < V >& Result, int lda
 
 
 template < class V >
-inline void transpose_block_SSE4x4(Matrix < V >& Target, Matrix < V >& Result)
+inline void transpose2Arg(Matrix < V >& Target, Matrix < V >& Result)
 {
-#pragma omp parallel for
+    ///Тут опять же исключение
+    if (&Target == &Result)
+    {
+        cout << "[TRANSPOSITION]Invalid usage\n";
+        assert(&Target != &Result);
+        return;
+    }
     
+#pragma omp parallel for
     const int originalStringNumber = Target.StringNumber;
     const int originalColumnNumber = Target.ColumnNumber;
     int lda = ROUND_UP(originalStringNumber, 4);
@@ -390,5 +402,46 @@ inline void transpose_block_SSE4x4(Matrix < V >& Target, Matrix < V >& Result)
     
     resize(Result, originalColumnNumber, originalStringNumber);
     resize(Target, originalColumnNumber, originalStringNumber);
+}
+
+template < class V >
+inline void transpose1Arg(Matrix < V >& Target)
+{
+    Matrix< V > Temp(Target.StringNumber, Target.ColumnNumber);
+    transpose2Arg(Target, Temp);
+    Target = Temp;
+}
+
+///такая же проблема, как у +
+template < class TYPE >
+Matrix< TYPE >& Matrix< TYPE >::operator*(Matrix < TYPE >& rhs)
+{
+    if (this->ColumnNumber == rhs.StringNumber)
+    {
+        ///тут надо обработать ошибку
+        assert(this->ColumnNumber == rhs.StringNumber);
+        //return static_cast<Matrix< TYPE >&> (0);
+    }
+    
+    Matrix < TYPE > Temp(this->StringNumber, rhs.ColumnNumber);
+    
+    transpose1Arg(rhs);
+    
+    for (int i = 0; i < Temp.StringNumber; i++)
+    {
+        for (int j = 0; j < Temp.ColumnNumber; j++)
+        {
+            for (int k = 0; k < (this->ColumnNumber); k++)
+            {
+                Temp.value[i][j] += this->value[i][k]*rhs.value[j][k];
+            }
+        }
+    }
+    
+    transpose1Arg(rhs);
+    
+    *this = Temp;
+    
+    return *this;
 }
 

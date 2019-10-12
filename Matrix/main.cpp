@@ -20,7 +20,7 @@ using namespace std;
 
 int main(int argc, const char * argv[])
 {
-    const int SIZE = 2;
+    const int SIZE = 3;
     //создание матриц
     Matrix<int> MyMatrix(SIZE,SIZE);
     Matrix<int> MyMatrix1(SIZE,SIZE);
@@ -30,12 +30,34 @@ int main(int argc, const char * argv[])
     
     for (int i = 1; i <= SIZE; i++)
     {
-        setValue(5, 1, i, MyMatrix1);
+        for (int j = 1; j <= SIZE; j++)
+        {
+            setValue(i+j, i, j, MyMatrix);
+        }
     }
-
-    MyMatrix = MyMatrix1;
-    transpose_block_SSE4x4(MyMatrix1, Result);
-    cout << "Original matrix: \n"<< MyMatrix << "Transposed matrix: \n" << Result;
+    
+    for (int i = 1; i <= SIZE; i++)
+    {
+        for (int j = 1; j <= SIZE; j++)
+        {
+            setValue(i*j, i, j, MyMatrix1);
+        }
+    }
+    
+//    for (int i = 1; i <= SIZE; i++)
+//    {
+//        setValue(3, i, i, MyMatrix1);
+//    }
+    
+    cout << "Original matrix 1: \n"<< MyMatrix << "Original matrix 2: \n" << MyMatrix1;
+    
+    Result = MyMatrix * MyMatrix1;
+    cout << "Product: \n" << Result;
+    //MyMatrix1 = MyMatrix;
+    
+    //transpose1Arg(MyMatrix);
+    //transpose2Arg(MyMatrix, MyMatrix);
+    //cout << "Original matrix: \n"<< MyMatrix1 << "Transposed matrix: \n" << MyMatrix;
     
     //cout << Transpose(MyMatrix);
     
