@@ -21,6 +21,7 @@
 #include <string>
 #include <xmmintrin.h>
 #include <x86intrin.h>
+#include <cmath>
 
 #define ROUND_UP(x, s) (((x)+((s)-1)) & -(s))
 
@@ -77,10 +78,10 @@ public:
     Matrix < TYPE >& operator *= (Matrix < TYPE > &rhs);
     bool operator == (const Matrix < TYPE > &rhs) const;
     bool operator != (const Matrix < TYPE > &rhs) const;
+    TYPE* operator[] (const int index);
 
+    double determinant();
     
-    
-
     
 private:
     int StringNumber;
@@ -482,9 +483,56 @@ bool Matrix < TYPE >::operator == (const Matrix < TYPE > &rhs) const
 }
 
 template < class TYPE >
-bool Matrix < TYPE >::operator!=(const Matrix < TYPE > &rhs ) const
+bool Matrix < TYPE >::operator!=(const Matrix < TYPE > &rhs) const
 {
     return (!(*this == rhs));
 }
 
+template < class TYPE >
+TYPE* Matrix < TYPE >::operator[] (const int index)
+{
+    return this->value[index];
+}
+
+template < class TYPE >
+double Matrix < TYPE >::determinant()
+{
+    if (this->StringNumber != this->ColumnNumber)
+    {
+        cout << "[DETERMINANT] Sizes are not equal\n";
+        assert(this->StringNumber != this->ColumnNumber);
+        return -1;
+    }
+    
+    double det = 0;
+    int i,j = 0;
+    int size = this->StringNumber;
+    
+    if(size == 1)
+    {
+        det = this->value[0][0];
+    }
+    else if(size == 2)
+    {
+        det = (this->value[0][0]) * (this->value[1][1]) - (this->value[0][1]) * (this->value[1][0]);
+    }
+    else
+    {
+        Matrix < TYPE > Temp(size-1, size-1);
+        for(i = 0; i < size; ++i)
+        {
+            for(j = 0; j < size-1; ++j)
+            {
+                if (j < i)
+                    Temp.value[j] = this->value[j];
+                else
+                    Temp.value[j] = this->value[j+1];
+            }
+            det += pow((double)-1, (i+j))*Temp.determinant() * (this->value[i][size-1]);
+        }
+        Temp.~Matrix<TYPE>();
+    }
+    return det;
+    
+}
 

@@ -2,12 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:../../Chat/server/parcer.c">
-   </FileRef>
-   <FileRef
-      location = "group:../../Chat/server/parcer.h">
-   </FileRef>
-   <FileRef
       location = "self:">
    </FileRef>
 </Workspace>

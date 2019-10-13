@@ -20,23 +20,23 @@ using namespace std;
 
 int main(int argc, const char * argv[])
 {
-    const int SIZE = 5;
+    const int SIZE = 2;
     //создание матриц
-    Matrix<int> MyMatrix(SIZE,5);
-    Matrix<int> MyMatrix1(5,SIZE);
+    Matrix<int> MyMatrix(SIZE,2);
+    Matrix<int> MyMatrix1(2,SIZE);
     Matrix<int> Result(SIZE,SIZE);
     // присвоение матрице значений одним действием {{1,2},{3,4},{5,6},{7,8}}
     //cin >> MyMatrix;
     
     for (int i = 1; i <= SIZE; i++)
     {
-        for (int j = 1; j <= 5; j++)
+        for (int j = 1; j <= 2; j++)
         {
             setValue(i+j, i, j, MyMatrix);
         }
     }
     
-    for (int i = 1; i <= 5; i++)
+    for (int i = 1; i <= 2; i++)
     {
         for (int j = 1; j <= SIZE; j++)
         {
@@ -46,17 +46,19 @@ int main(int argc, const char * argv[])
     
     cout << "Original matrix 1: \n"<< MyMatrix << "Original matrix 2: \n" << MyMatrix1;
 
-    Result = MyMatrix * MyMatrix1;
-    cout << "Product: \n" << MyMatrix;
+//    Result = MyMatrix * MyMatrix1;
+//    cout << "Product: \n" << MyMatrix;
     
-    if (Result == MyMatrix)
-    {
-        cout << "TRUE\n";
-    }
-    else
-    {
-        cout << "FALSE\n";
-    }
+    cout << "det MyMatrix = " << MyMatrix.determinant() << "\n";
+    
+//    if (Result == MyMatrix)
+//    {
+//        cout << "TRUE\n";
+//    }
+//    else
+//    {
+//        cout << "FALSE\n";
+//    }
     
     //MyMatrix = MyMatrix1;
     //transpose1Arg(MyMatrix1);
