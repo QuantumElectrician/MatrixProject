@@ -52,6 +52,10 @@ public:
     template < class V >
     friend istream& operator>>(istream& in, Matrix < V >& Target);
     
+    //not released
+    template < class V, class U >
+    friend void resize( Matrix < V >& Target, const int newStringNumber,const int newColumnNumber, const U typeIdentificator );
+    
     template < class V >
     friend void resize(Matrix < V >& Target, const int newStringNumber,const int newColumnNumber);
     
@@ -69,7 +73,6 @@ public:
     
     
     Matrix < TYPE >& operator = (const Matrix < TYPE > &rhs);
-    //Matrix < TYPE >& operator = (const std::string  stringMatrix);
     Matrix < TYPE >& operator + (const Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator - (const Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator += (const Matrix < TYPE > &rhs);
@@ -81,6 +84,11 @@ public:
     TYPE* operator[] (const int index);
 
     double determinant();
+    Matrix < TYPE >& upTriangle();
+    Matrix < TYPE >& operator * (double operand);
+    Matrix < TYPE >& operator *= (double operand);
+    Matrix < TYPE >& diag();
+    Matrix < TYPE >& makeBeautiful();
     
     
 private:
@@ -130,8 +138,11 @@ Matrix < TYPE > :: ~Matrix()
     {
         free(value[i]);
     }
-    free(value);
-    cout << "[DESTRUCTOR] Destructed\n";
+    if (StringNumber > 0)
+    {
+        free(value);
+    }
+    cout << "\n[DESTRUCTOR] Destructed\n";
     
     StringNumber = 0;
     ColumnNumber = 0;
@@ -246,6 +257,69 @@ Matrix < TYPE >&  Matrix< TYPE >::operator= (const Matrix < TYPE > &rhs)
     
     return *this;
 }
+
+//template < class V, class U >
+//void resize( Matrix < V >& Target, const int newStringNumber,const int newColumnNumber, const U typeIdentificator )
+//{
+//    U** TempOuter;
+//    U* TempInner;
+//
+//    assert(Target.value != NULL);
+//    TempOuter = static_cast< U** > ( malloc(sizeof(U*) * newStringNumber) );
+//    assert(TempOuter != NULL);
+//
+//    for (int i = 0; i < newStringNumber; i++)
+//    {
+//        if (i < Target.StringNumber)
+//        {
+//            assert(Target.value[i] != NULL);
+//            TempInner = static_cast< U* > ( malloc(sizeof(U) * newColumnNumber) );
+//            assert(TempInner != NULL);
+//            TempOuter[i] = TempInner;
+//        }
+//        else
+//        {
+//            TempInner = static_cast< U* > ( malloc(sizeof(U) * newColumnNumber) );
+//            assert(TempInner != NULL);
+//            TempOuter[i] = TempInner;
+//        }
+//    }
+//
+//
+//    for (int i = 0; i < Target.StringNumber; i++)
+//    {
+//        for (int j = 0; j < Target.ColumnNumber; j++)
+//        {
+//            TempOuter[i][j] = static_cast< U >( Target.value[i][j] );
+//        }
+//    }
+//
+//    for(int i = 0; i < Target.StringNumber; i++)
+//    {
+//        free(Target.value[i]);
+//    }
+//    free(Target.value);
+//
+//    Target.value = TempOuter;
+//    for (int i = 0; i < newStringNumber; i++)
+//    {
+//        Target.value[i] = TempOuter[i];
+//    }
+//
+//    for (int i = 0; i < newStringNumber; i++)
+//    {
+//        for (int j = 0; j < newColumnNumber; j++)
+//        {
+//            if ( (i >= Target.StringNumber) || (j>= Target.ColumnNumber) )
+//            {
+//                Target.value[i][j] = 0;
+//            }
+//        }
+//    }
+//
+//    Target.ColumnNumber = newColumnNumber;
+//    Target.StringNumber = newStringNumber;
+//}
 
 template < class V >
 void resize( Matrix < V >& Target, const int newStringNumber,const int newColumnNumber )
@@ -524,15 +598,114 @@ double Matrix < TYPE >::determinant()
             for(j = 0; j < size-1; ++j)
             {
                 if (j < i)
-                    Temp.value[j] = this->value[j];
+                {
+                    for (int k = 0; k < size - 1; k++)
+                    {
+                        Temp.value[j][k] = this->value[j][k];
+                    }
+                }
+                    //Temp.value[j] = Target.value[j];
                 else
-                    Temp.value[j] = this->value[j+1];
+                {
+                    for (int k = 0; k < size - 1; k++)
+                    {
+                        Temp.value[j][k] = this->value[j+1][k];
+                    }
+                }
+                    //Temp.value[j] = Target.value[j+1];
             }
-            det += pow((double)-1, (i+j))*Temp.determinant() * (this->value[i][size-1]);
+            det += pow((double)-1, (i+j)) * Temp.determinant() * (this->value[i][size-1]);
         }
         Temp.~Matrix<TYPE>();
     }
+    //cout << "\n [DETERMINANT:]\n" << Target;
     return det;
+}
+
+template < class TYPE >
+Matrix < TYPE >& Matrix < TYPE >::upTriangle()
+{
+    ///тут проверка на double
     
+    int i, j, k = 0;
+    int countSwaps = 1;
+    double eps = 1e-5;
+    for (i = 0; i < this->StringNumber; ++ i)
+    {
+        // находим строку с максимальным первым элементом
+        int iMax = i;
+        for (j = i + 1; j < this->StringNumber; ++ j)
+            if ( abs (this->value[j][i]) > abs (this->value[iMax][i]) )
+                iMax = j;
+        if (abs (this->value[iMax][i]) < eps)
+            continue;
+        for (k = 0; k < this->ColumnNumber; ++k)
+            swap (this->value[i][k], this->value[iMax][k]);
+        countSwaps = - countSwaps * (i != iMax ? 1 : - 1);
+        
+        //  вычитаем текущую строку из всех остальных
+//        for (j = i + 1; j < this->StringNumber; ++j)
+//        {
+//            int q = - this->value[j][i];
+//            int koeff = this->value[i][i];
+//            //домножаем обрабатываемую строку на первый элемент первой строки (та, которую хотим занулить)
+//            for (k = i; k < this->ColumnNumber; k++)
+//            {
+//                this->value[j][k] *= koeff;
+//            }
+//            //вычитаем из обрабатываемой строки первую, умноженную на первый элемент обрабатываемой строки
+//            //k -- итератор столбцов
+//            for (k = this->ColumnNumber - 1; k >= i; --k)
+//                this->value[j][k] += q * this->value[i][k];
+//        }
+        for (j = i + 1; j < this->StringNumber; ++ j)
+        {
+            double q = - this->value[j][i] / this->value[i][i];
+            for (k = this->StringNumber - 1; k >= i; -- k)
+                this->value[j][k] += q * this->value[i][k];
+        }
+    }
+    
+    // умножаем матрицу на -1, если мы сделали  нечётное количество перестановок строк
+    // в итоге определитель результирующей матрицы  будет равен определителю начальной матрицы
+    *this = *this * static_cast<double>(countSwaps);
+    return this->makeBeautiful();
+}
+
+template < class TYPE >
+Matrix < TYPE >& Matrix<TYPE>::operator * (double operand)
+{
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        for (int j = 0; j < this->ColumnNumber; j++)
+        {
+            this->value[i][j] *= operand;
+        }
+    }
+    return *this;
+}
+
+
+template < class TYPE >
+Matrix < TYPE >& Matrix < TYPE >::makeBeautiful()
+{
+    double eps = 1e-6;
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        for (int j = 0; j < this->ColumnNumber; j++)
+        {
+            if (abs(this->value[i][j]) < eps)
+            {
+                this->value[i][j] = 0;
+            }
+        }
+    }
+    return *this;
+}
+
+template < class TYPE >
+Matrix < TYPE >& Matrix<TYPE>::operator *= (double operand)
+{
+    return (*this * operand);
 }
 
