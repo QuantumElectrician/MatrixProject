@@ -9,6 +9,11 @@
 //  Created by Владислав Агафонов on 19/09/2019.
 //  Copyright © 2019 Владислав Агафонов. All rights reserved.
 //
+
+///TODO:
+/// Поменять +, -, *, чтобы не менялись аргументы
+/// Поставить везде проверку условий (наверное exceptions)
+///
 #pragma once
 
 #include <iostream>
@@ -47,8 +52,9 @@ public:
     friend istream& operator>>(istream& in, Matrix < V >& Target);
     
     template < class V >
-    friend void resize( Matrix < V >& Target, const int newStringNumber,const int newColumnNumber );
+    friend void resize(Matrix < V >& Target, const int newStringNumber,const int newColumnNumber);
     
+    //Service funtion
     template < class V >
     friend inline void transpose4x4_SSE(Matrix < V >& Target, Matrix < V >& Result,
                                          int lda, int ldb, int costyl1, int costyl2);
@@ -63,14 +69,15 @@ public:
     
     Matrix < TYPE >& operator = (const Matrix < TYPE > &rhs);
     //Matrix < TYPE >& operator = (const std::string  stringMatrix);
-    //bool operator == (const char*  stringMatrix) const;
-    //bool operator == (const char*  stringMatrix) const;
     Matrix < TYPE >& operator + (const Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator - (const Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator += (const Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator -= (const Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator * (Matrix < TYPE > &rhs);
-    Matrix < TYPE >& operator *= (const Matrix < TYPE > &rhs);
+    Matrix < TYPE >& operator *= (Matrix < TYPE > &rhs);
+    bool operator == (const Matrix < TYPE > &rhs) const;
+    bool operator != (const Matrix < TYPE > &rhs) const;
+
     
     
 
@@ -369,7 +376,7 @@ inline void transpose2Arg(Matrix < V >& Target, Matrix < V >& Result)
     int lda = ROUND_UP(originalStringNumber, 4);
     int ldb = ROUND_UP(originalColumnNumber, 4);
     
-    ///не оч понятно, почему не работает с НЕквадратными матрицами
+    ///не оч понятно, почему не работает с округленными НЕквадратными матрицами
     ///спасает оквадрачивание
     ///говорят, что размер блока 16 ускоряет вычисления  (сначала пробовал 4 и было ок)
     ///померить и может как-то по умному выбрать размер блока
@@ -413,6 +420,7 @@ inline void transpose1Arg(Matrix < V >& Target)
 }
 
 ///такая же проблема, как у +
+///наверное нужно передавать переменную для результата?
 template < class TYPE >
 Matrix< TYPE >& Matrix< TYPE >::operator*(Matrix < TYPE >& rhs)
 {
@@ -444,4 +452,39 @@ Matrix< TYPE >& Matrix< TYPE >::operator*(Matrix < TYPE >& rhs)
     
     return *this;
 }
+
+
+template < class TYPE >
+Matrix < TYPE >& Matrix < TYPE >::operator *= (Matrix < TYPE > &rhs)
+{
+    return (*this * rhs);
+}
+
+template < class TYPE >
+bool Matrix < TYPE >::operator == (const Matrix < TYPE > &rhs) const
+{
+    if ( (this->ColumnNumber != rhs.ColumnNumber) || (this->StringNumber != rhs.StringNumber) )
+    {
+        return false;
+    }
+    
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        for (int j = 0; j < this->ColumnNumber; j++)
+        {
+            if (this->value[i][j] != rhs.value[i][j])
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+template < class TYPE >
+bool Matrix < TYPE >::operator!=(const Matrix < TYPE > &rhs ) const
+{
+    return (!(*this == rhs));
+}
+
 

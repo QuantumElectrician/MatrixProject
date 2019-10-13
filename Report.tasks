@@ -1,2 +1,2 @@
 www.viva64.com/en/w	1	err	Help: The documentation for all analyzer warnings is available here: https://www.viva64.com/en/w/.
-/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/Definition.hpp	257	warn	V522 There might be dereferencing of a potential null pointer 'Target.value'. Check lines: 257, 249.
+/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/Definition.hpp	264	warn	V522 There might be dereferencing of a potential null pointer 'Target.value'. Check lines: 264, 256.
