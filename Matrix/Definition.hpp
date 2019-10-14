@@ -11,8 +11,8 @@
 //
 
 ///TODO:
-/// Поменять +, -, *, чтобы не менялись аргументы
-/// Поставить везде проверку условий (наверное exceptions)
+/// Написать детерминанты без изменения самой матрицы (то есть диагонализировать копию)
+///Поменять детерминант в invert на floating?
 ///
 #pragma once
 
@@ -92,6 +92,9 @@ public:
     Matrix < TYPE >& makeBeautiful();
     void gauss(double* results);
     Matrix < TYPE >& concate(const Matrix < TYPE >& rhs);
+    Matrix < TYPE >& invert();
+    Matrix < TYPE > eraseColums (int index1, int index2);
+    Matrix < TYPE >& copy( Matrix< TYPE >& From );
     
     
 private:
@@ -99,6 +102,7 @@ private:
     int ColumnNumber;
     TYPE** value;
     constexpr const static double EPS = 1e-6;
+    double determinantTrianglNotSafe();
 };
 
 
@@ -551,8 +555,8 @@ double Matrix < TYPE >::determinantInt()
         return -1;
     }
     
-    static_assert(is_integral<TYPE>::value,
-                  "[DETERMINANT_INT] Only floating point types avaliable\n");
+    //static_assert(is_integral<TYPE>::value,
+    //              "[DETERMINANT_INT] Only integral types avaliable\n");
     
     double det = 0;
     int i,j = 0;
@@ -590,7 +594,7 @@ double Matrix < TYPE >::determinantInt()
                 }
                     //Temp.value[j] = Target.value[j+1];
             }
-            det += pow((double)-1, (i+j)) * Temp.determinant() * (this->value[i][size-1]);
+            det += pow((double)-1, (i+j)) * Temp.determinantInt() * (this->value[i][size-1]);
         }
         Temp.~Matrix<TYPE>();
     }
@@ -715,17 +719,13 @@ template < class TYPE >
 void Matrix< TYPE >::gauss(double* results)
 {
     static_assert(is_floating_point<TYPE>::value,
-                  "[gauss] Only floating point types avaliable\n");
+                  "[GAUSS] Only floating point types avaliable\n");
     
     int i, j = 0;
     this->upTriangle();
     
     //проверяем определитель исходной матрицы
-    double localDet = 1;
-    for (int i = 0; i < this->StringNumber; i++)
-    {
-        localDet *= this->value[i][i];
-    }
+    double localDet = this->determinantTrianglNotSafe();
     if (localDet == 0)
     {
         cout << "[GAUSS] Unsuccesful: degenerate core matrix ";
@@ -771,8 +771,6 @@ Matrix < TYPE >& Matrix < TYPE >::diag()
         }
     return *this;
     
-    
-    
 }
 
 template < class TYPE >
@@ -788,12 +786,93 @@ Matrix < TYPE >& Matrix < TYPE >::concate(const Matrix < TYPE >& rhs)
     
     for (int i = 0; i < this->StringNumber; i++)
     {
-        for (int j = 1; j <= rhs.ColumnNumber; j++)
+        for (int j = 0; j < rhs.ColumnNumber; j++)
         {
-            this->value[i][this->ColumnNumber + j] = rhs[i][j];
+            this->value[i][this->ColumnNumber - rhs.ColumnNumber + j] = rhs.value[i][j];
         }
     }
     return *this;
 }
 
+template < class TYPE >
+Matrix < TYPE >& Matrix< TYPE >::invert()
+{
+    static_assert(is_floating_point<TYPE>::value,
+                  "[INVERT] Only floating point types avaliable\n");
+    
+    if (this->determinantInt() == 0)
+    {
+        cout << "[INVERT] Degenerate matrix\n";
+        throw runtime_error("[INVERT] Degenerate matrix\n");
+    }
+    
+    //делаем единичную
+    Matrix < TYPE > E(this->StringNumber, this->StringNumber);
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        setValue(1, i+1, i+1, E);
+    }
+    
+    Matrix < TYPE > Temp(this->StringNumber, this->StringNumber);
+    Temp.copy(*this);
+    Temp.concate(E);
+    Temp.diag().makeBeautiful();
+    
+//    if (Temp.ColumnNumber == 0)
+//    {
+//        return Temp;
+//    }
+    
+    for (int i = 0; i < this->ColumnNumber; ++i)
+    {
+        for (int k = 2*(this->ColumnNumber)-1; k >= 0; --k)
+        {
+            Temp.value[i][k] /= Temp.value[i][i];
+            //cout << "[INVERT]:\n" << Temp;
+        }
+    }
+    
 
+    resize(*this, Temp.StringNumber, Temp.ColumnNumber - E.ColumnNumber);
+    //cout << "[INVERT]:\n" << Temp;
+    for (int i = 0; i < E.StringNumber; i++)
+    {
+        for (int j = 0; j < E.ColumnNumber; j++)
+        {
+            this->value[i][j] = Temp.value[i][this->StringNumber+j];
+            //cout << "this->value[" << i << "][" << j << "]" << this->value[i][j] << "\n";
+        }
+    }
+    return *this;
+}
+
+template < class TYPE >
+Matrix < TYPE > Matrix < TYPE >::eraseColums (int index1, int index2)
+{
+    Matrix < TYPE > Temp(this->StringNumber, this->ColumnNumber - (index2 - index1 + 1));
+    for (int j = 0; j < index1; ++j)
+        for (int i = 0; i < this->StringNumber; ++ i)
+            Temp.value[i][j] = this->value[i][j];
+    for (int j = index2 + 1; j < this->ColumnNumber; ++ j)
+        for (int i = 0; i < this->StringNumber; ++ i)
+            Temp.value[i][j - index2 - 1 + index1] = this->value[i][j];
+    return Temp;
+}
+
+template < class V >
+double Matrix < V >::determinantTrianglNotSafe()
+{
+    double localDet = 1;
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        localDet *= this->value[i][i];
+    }
+    return localDet;
+}
+
+template < class TYPE >
+Matrix < TYPE >& Matrix < TYPE >::copy( Matrix< TYPE >& From )
+{
+    *this = From;
+    return *this;
+}

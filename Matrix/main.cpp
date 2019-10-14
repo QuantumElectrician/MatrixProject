@@ -40,7 +40,7 @@ int main(int argc, const char * argv[])
     
     for (int i = 1; i <= SIZE; i++)
     {
-        for (int j = 1; j <= SIZE+1; j++)
+        for (int j = 1; j <= SIZE; j++)
         {
             setValue(i*j, i, j, MyMatrix1);
         }
@@ -54,7 +54,7 @@ int main(int argc, const char * argv[])
         }
     }
     
-    setValue(10, 1, 1, MyMatrix1);
+    setValue(10, 1, 1, MyMatrix);
     
 //    cout << MyMatrix1 << Result;
 //    MyMatrix = MyMatrix1 + Result;
@@ -62,15 +62,24 @@ int main(int argc, const char * argv[])
     
     //cout << "Original matrix: \n"<< MyMatrix << "Original matrix1: \n" << MyMatrix1;
     //cout << "Original matrix: \n"<< MyMatrix << MyMatrix.upTriangle();
+
     
-    double results[3];
+//    cout << MyMatrix;
+//    cout << MyMatrix1;
+//    cout << MyMatrix.concate(MyMatrix1);
+    
+    MyMatrix1 = MyMatrix;
     cout << MyMatrix1;
-    MyMatrix1.gauss(results);
-    cout << "RESULTS: \n";
-    for (auto index : results)
-    {
-        cout << index << "\n";
-    }
+    cout << MyMatrix.invert().makeBeautiful();
+    
+//    double results[3];
+//    cout << MyMatrix1;
+//    MyMatrix1.gauss(results);
+//    cout << "RESULTS: \n";
+//    for (auto index : results)
+//    {
+//        cout << index << "\n";
+//    }
     //cout << MyMatrix;
     //cout << "UpTriangle MyMatrix: \n" << MyMatrix.diag().makeBeautiful();
     //cout << "det MyMatrix = " << MyMatrix.determinantFloatingPoint() << "\n";
