@@ -11,8 +11,7 @@
 //
 
 ///TODO:
-/// Написать детерминанты без изменения самой матрицы (то есть диагонализировать копию)
-///Поменять детерминант в invert на floating?
+/// Добавить makeBeautiful всюду
 ///
 #pragma once
 
@@ -101,7 +100,7 @@ private:
     int StringNumber;
     int ColumnNumber;
     TYPE** value;
-    constexpr const static double EPS = 1e-6;
+    constexpr const static double EPS = 1e-5;
     double determinantTrianglNotSafe();
 };
 
@@ -555,8 +554,8 @@ double Matrix < TYPE >::determinantInt()
         return -1;
     }
     
-    //static_assert(is_integral<TYPE>::value,
-    //              "[DETERMINANT_INT] Only integral types avaliable\n");
+    static_assert(is_integral<TYPE>::value,
+                  "[DETERMINANT_INT] Only integral types avaliable\n");
     
     double det = 0;
     int i,j = 0;
@@ -616,10 +615,12 @@ double Matrix< TYPE >::determinantFloatingPoint()
                   "[DETERMINANT_FLOATING_POINT] Only floating point types avaliable\n");
     
     double det = 1;
-    this->diag();
-    for (int i = 0; i < this->StringNumber; i++)
+    Matrix < TYPE > Temp(this->StringNumber, this->ColumnNumber);
+    Temp.copy(*this);
+    Temp.diag();
+    for (int i = 0; i < Temp.StringNumber; i++)
     {
-        det *= this->value[i][i];
+        det *= Temp.value[i][i];
     }
     return det;
 }
@@ -800,7 +801,7 @@ Matrix < TYPE >& Matrix< TYPE >::invert()
     static_assert(is_floating_point<TYPE>::value,
                   "[INVERT] Only floating point types avaliable\n");
     
-    if (this->determinantInt() == 0)
+    if (this->determinantFloatingPoint() == 0)
     {
         cout << "[INVERT] Degenerate matrix\n";
         throw runtime_error("[INVERT] Degenerate matrix\n");

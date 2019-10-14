@@ -70,7 +70,7 @@ int main(int argc, const char * argv[])
     
     MyMatrix1 = MyMatrix;
     cout << MyMatrix1;
-    cout << MyMatrix.invert().makeBeautiful();
+    cout << (MyMatrix.invert().makeBeautiful() * MyMatrix1).makeBeautiful();
     
 //    double results[3];
 //    cout << MyMatrix1;

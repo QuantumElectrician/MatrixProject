@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Matrix/Definition.hpp"
-            timestampString = "592788583.453186"
+            timestampString = "592789096.409891"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "844"
-            endingLineNumber = "844"
+            startingLineNumber = "847"
+            endingLineNumber = "847"
             landmarkName = "invert()"
             landmarkType = "9">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Matrix/Definition.hpp"
-            timestampString = "592788583.453645"
+            timestampString = "592789096.410452"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "275"
-            endingLineNumber = "275"
+            startingLineNumber = "276"
+            endingLineNumber = "276"
             landmarkName = "resize( Matrix &lt; V &gt;&amp; Target, const int newStringNumber,const int newColumnNumber )"
             landmarkType = "9">
          </BreakpointContent>
