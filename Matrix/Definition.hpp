@@ -644,7 +644,6 @@ Matrix < TYPE >& Matrix<TYPE>::operator * (double operand)
 template < class TYPE >
 Matrix < TYPE >& Matrix < TYPE >::makeBeautiful()
 {
-    //double eps = 1e-6;
     for (int i = 0; i < this->StringNumber; i++)
     {
         for (int j = 0; j < this->ColumnNumber; j++)
@@ -689,4 +688,27 @@ void Matrix< TYPE >::gauss(double* results)
         }
     }
 }
+
+template < class TYPE >
+Matrix < TYPE >& Matrix < TYPE >::diag()
+{
+    static_assert(is_floating_point<TYPE>::value,
+                  "[DIAG] Only floating point types avaliable\n");
+    
+    this->upTriangle();
+    for (int i = 1; i < this->StringNumber; ++i)
+        for (int j = 0; j < i; ++j)
+        {
+            if (abs (this->value[i][i]) < EPS)
+            {
+                cout << "[DIAG] Diagonalization was unsuccesful\n";
+                throw runtime_error("[DIAG] Diagonalization was unsuccesful\n");
+            }
+            double q = - this->value[j][i] / this->value[i][i];
+            for (int k = this->ColumnNumber - 1; k >= i; --k)
+                this->value[j][k] += q * this->value[i][k];
+        }
+    return *this;
+}
+
 

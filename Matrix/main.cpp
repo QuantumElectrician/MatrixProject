@@ -75,8 +75,8 @@ int main(int argc, const char * argv[])
     //    cout << "Product: \n" << MyMatrix;
     
     cout << MyMatrix;
-    cout << "UpTriangle MyMatrix: \n" << MyMatrix.upTriangle();
-    cout << "det MyMatrix = " << MyMatrix.determinant() << "\n";
+    cout << "UpTriangle MyMatrix: \n" << MyMatrix.diag().makeBeautiful();
+    //cout << "det MyMatrix = " << MyMatrix.determinant() << "\n";
     
 //    if (MyMatrix1 == MyMatrix)
 //    {

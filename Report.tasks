@@ -1,5 +1,6 @@
 www.viva64.com/en/w	1	err	Help: The documentation for all analyzer warnings is available here: https://www.viva64.com/en/w/.
-/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/Definition.hpp	338	warn	V522 There might be dereferencing of a potential null pointer 'Target.value'. Check lines: 338, 330.
-/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/main.cpp	106	err	V749 Destructor of the 'MyMatrix1' object will be invoked a second time after leaving the object's scope.
-/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/main.cpp	107	err	V749 Destructor of the 'Result' object will be invoked a second time after leaving the object's scope.
-/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/main.cpp	108	err	V749 Destructor of the 'MyMatrix' object will be invoked a second time after leaving the object's scope.
+/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/Definition.hpp	283	warn	V560 A part of conditional expression is always false: (TempOuter == __null).
+/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/Definition.hpp	293	warn	V560 A part of conditional expression is always false: (TempOuter == __null).
+/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/main.cpp	120	err	V749 Destructor of the 'MyMatrix1' object will be invoked a second time after leaving the object's scope.
+/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/main.cpp	121	err	V749 Destructor of the 'Result' object will be invoked a second time after leaving the object's scope.
+/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/main.cpp	122	err	V749 Destructor of the 'MyMatrix' object will be invoked a second time after leaving the object's scope.
