@@ -70,8 +70,6 @@ public:
     friend inline void transpose1Arg(Matrix < V >& Target);
     
     
-    
-    
     Matrix < TYPE >& operator = (const Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator + (const Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator - (const Matrix < TYPE > &rhs);
@@ -89,6 +87,7 @@ public:
     Matrix < TYPE >& operator *= (double operand);
     Matrix < TYPE >& diag();
     Matrix < TYPE >& makeBeautiful();
+    void gauss(double* results);
     
     
 private:
@@ -661,7 +660,7 @@ Matrix < TYPE >& Matrix < TYPE >::upTriangle()
         for (j = i + 1; j < this->StringNumber; ++ j)
         {
             double q = - this->value[j][i] / this->value[i][i];
-            for (k = this->StringNumber - 1; k >= i; -- k)
+            for (k = this->ColumnNumber - 1; k >= i; -- k)
                 this->value[j][k] += q * this->value[i][k];
         }
     }
@@ -707,5 +706,29 @@ template < class TYPE >
 Matrix < TYPE >& Matrix<TYPE>::operator *= (double operand)
 {
     return (*this * operand);
+}
+
+template < class TYPE >
+void Matrix< TYPE >::gauss(double* results)
+{
+    int i, j = 0;
+    double eps = 1e-6;
+    this->upTriangle();
+    results[this->StringNumber-1] =
+    (this->value[this->ColumnNumber-2][this->ColumnNumber-1]) / (this->value[this->ColumnNumber-2][this->StringNumber-1]);
+    for (i = this->StringNumber - 2; i >= 0; i--)
+    {
+        results[i] = this->value[i][this->StringNumber];
+        for ( j = i+1; j < this->StringNumber; j++)
+        {
+            results[i]-=this->value[i][j] * results[j];
+        }
+        results[i] /= this->value[i][i];
+        
+        if (abs(results[i]) < eps)
+        {
+            results[i] = 0;
+        }
+    }
 }
 
