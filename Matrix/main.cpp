@@ -25,7 +25,7 @@ int main(int argc, const char * argv[])
     const int SIZE = 3;
     //создание матриц
     Matrix<TYPE> MyMatrix(SIZE,SIZE);
-    Matrix<TYPE> MyMatrix1(SIZE,SIZE);
+    Matrix<TYPE> MyMatrix1(SIZE,SIZE+1);
     Matrix<TYPE> Result(SIZE,SIZE);
     // присвоение матрице значений одним действием {{1,2},{3,4},{5,6},{7,8}}
     //cin >> MyMatrix;
@@ -40,7 +40,7 @@ int main(int argc, const char * argv[])
     
     for (int i = 1; i <= SIZE; i++)
     {
-        for (int j = 1; j <= SIZE; j++)
+        for (int j = 1; j <= SIZE+1; j++)
         {
             setValue(i*j, i, j, MyMatrix1);
         }
@@ -54,7 +54,7 @@ int main(int argc, const char * argv[])
         }
     }
     
-    setValue(10, 1, 1, MyMatrix);
+    setValue(10, 1, 1, MyMatrix1);
     
 //    cout << MyMatrix1 << Result;
 //    MyMatrix = MyMatrix1 + Result;
@@ -63,20 +63,17 @@ int main(int argc, const char * argv[])
     //cout << "Original matrix: \n"<< MyMatrix << "Original matrix1: \n" << MyMatrix1;
     //cout << "Original matrix: \n"<< MyMatrix << MyMatrix.upTriangle();
     
-//    double results[3];
-//    MyMatrix.gauss(results);
-//    cout << "RESULTS: \n";
-//    for (auto index : results)
-//    {
-//        cout << index << "\n";
-//    }
-    
-    //    Result = MyMatrix * MyMatrix1;
-    //    cout << "Product: \n" << MyMatrix;
-    
-    cout << MyMatrix;
-    cout << "UpTriangle MyMatrix: \n" << MyMatrix.diag().makeBeautiful();
-    //cout << "det MyMatrix = " << MyMatrix.determinant() << "\n";
+    double results[3];
+    cout << MyMatrix1;
+    MyMatrix1.gauss(results);
+    cout << "RESULTS: \n";
+    for (auto index : results)
+    {
+        cout << index << "\n";
+    }
+    //cout << MyMatrix;
+    //cout << "UpTriangle MyMatrix: \n" << MyMatrix.diag().makeBeautiful();
+    //cout << "det MyMatrix = " << MyMatrix.determinantFloatingPoint() << "\n";
     
 //    if (MyMatrix1 == MyMatrix)
 //    {

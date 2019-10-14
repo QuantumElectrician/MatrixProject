@@ -82,13 +82,16 @@ public:
     bool operator != (const Matrix < TYPE > &rhs) const;
     TYPE* operator[] (const int index);
 
-    double determinant();
+    double determinantInt();
+    double determinantFloatingPoint();
+    double determinantTriangl();
     Matrix < TYPE >& upTriangle();
     Matrix < TYPE >& operator * (double operand);
     Matrix < TYPE >& operator *= (double operand);
     Matrix < TYPE >& diag();
     Matrix < TYPE >& makeBeautiful();
     void gauss(double* results);
+    Matrix < TYPE >& concate(const Matrix < TYPE >& rhs);
     
     
 private:
@@ -539,14 +542,17 @@ TYPE* Matrix < TYPE >::operator[] (const int index)
 }
 
 template < class TYPE >
-double Matrix < TYPE >::determinant()
+double Matrix < TYPE >::determinantInt()
 {
     if (this->StringNumber != this->ColumnNumber)
     {
-        cout << "[DETERMINANT] Sizes are not equal\n";
-        throw runtime_error("[DETERMINANT] Sizes are not equal\n");
+        cout << "[DETERMINANT_INT] Sizes are not equal\n";
+        throw runtime_error("[DETERMINANT_INT] Sizes are not equal\n");
         return -1;
     }
+    
+    static_assert(is_integral<TYPE>::value,
+                  "[DETERMINANT_INT] Only floating point types avaliable\n");
     
     double det = 0;
     int i,j = 0;
@@ -591,6 +597,48 @@ double Matrix < TYPE >::determinant()
     //cout << "\n [DETERMINANT:]\n" << Target;
     return det;
 }
+
+template < class TYPE >
+double Matrix< TYPE >::determinantFloatingPoint()
+{
+    if (this->StringNumber != this->ColumnNumber)
+    {
+        cout << "[DETERMINANT_FLOATING_POINT] Sizes are not equal\n";
+        throw runtime_error("[DETERMINANT_FLOATING_POINT] Sizes are not equal\n");
+        return -1;
+    }
+    
+    static_assert(is_floating_point<TYPE>::value,
+                  "[DETERMINANT_FLOATING_POINT] Only floating point types avaliable\n");
+    
+    double det = 1;
+    this->diag();
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        det *= this->value[i][i];
+    }
+    return det;
+}
+
+template < class TYPE >
+double Matrix< TYPE >::determinantTriangl()
+{
+    if (this->StringNumber != this->ColumnNumber)
+    {
+        cout << "[DETERMINANT_FLOATING_POINT] Sizes are not equal\n";
+        throw runtime_error("[DETERMINANT_FLOATING_POINT] Sizes are not equal\n");
+        return -1;
+    }
+    
+    double det = 1;
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        det *= this->value[i][i];
+    }
+    return det;
+}
+
+
 
 template < class TYPE >
 Matrix < TYPE >& Matrix < TYPE >::upTriangle()
@@ -671,6 +719,19 @@ void Matrix< TYPE >::gauss(double* results)
     
     int i, j = 0;
     this->upTriangle();
+    
+    //проверяем определитель исходной матрицы
+    double localDet = 1;
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        localDet *= this->value[i][i];
+    }
+    if (localDet == 0)
+    {
+        cout << "[GAUSS] Unsuccesful: degenerate core matrix ";
+        throw runtime_error("[GAUSS] Unsuccesful: degenerate core matrix ");
+    }
+    
     results[this->StringNumber-1] =
     (this->value[this->ColumnNumber-2][this->ColumnNumber-1]) / (this->value[this->ColumnNumber-2][this->StringNumber-1]);
     for (i = this->StringNumber - 2; i >= 0; i--)
@@ -681,7 +742,7 @@ void Matrix< TYPE >::gauss(double* results)
             results[i] -= this->value[i][j] * results[j];
         }
         results[i] /= this->value[i][i];
-        
+
         if (abs(results[i]) < EPS)
         {
             results[i] = 0;
@@ -708,6 +769,30 @@ Matrix < TYPE >& Matrix < TYPE >::diag()
             for (int k = this->ColumnNumber - 1; k >= i; --k)
                 this->value[j][k] += q * this->value[i][k];
         }
+    return *this;
+    
+    
+    
+}
+
+template < class TYPE >
+Matrix < TYPE >& Matrix < TYPE >::concate(const Matrix < TYPE >& rhs)
+{
+    if ( this->StringNumber != rhs.StringNumber )
+    {
+        cout << "[CONCATE] Column numbers are not equal\n";
+        throw runtime_error("[CONCATE] Column numbers are not equal\n");
+    }
+    int newColumnNumber = this->ColumnNumber + rhs.ColumnNumber;
+    resize(*this, this->StringNumber, newColumnNumber);
+    
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        for (int j = 1; j <= rhs.ColumnNumber; j++)
+        {
+            this->value[i][this->ColumnNumber + j] = rhs[i][j];
+        }
+    }
     return *this;
 }
 
