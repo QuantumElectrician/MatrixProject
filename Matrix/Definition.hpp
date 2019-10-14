@@ -22,6 +22,7 @@
 #include <xmmintrin.h>
 #include <x86intrin.h>
 #include <cmath>
+#include <exception>
 
 #define ROUND_UP(x, s) (((x)+((s)-1)) & -(s))
 
@@ -71,11 +72,11 @@ public:
     
     
     Matrix < TYPE >& operator = (const Matrix < TYPE > &rhs);
-    Matrix < TYPE >& operator + (const Matrix < TYPE > &rhs);
-    Matrix < TYPE >& operator - (const Matrix < TYPE > &rhs);
+    Matrix < TYPE > operator + (const Matrix < TYPE > &rhs);
+    Matrix < TYPE > operator - (const Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator += (const Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator -= (const Matrix < TYPE > &rhs);
-    Matrix < TYPE >& operator * (Matrix < TYPE > &rhs);
+    Matrix < TYPE > operator * (Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator *= (Matrix < TYPE > &rhs);
     bool operator == (const Matrix < TYPE > &rhs) const;
     bool operator != (const Matrix < TYPE > &rhs) const;
@@ -94,6 +95,7 @@ private:
     int StringNumber;
     int ColumnNumber;
     TYPE** value;
+    constexpr const static double EPS = 1e-6;
 };
 
 
@@ -239,6 +241,7 @@ istream&  operator>> (istream& in, Matrix < V > &Target)
 template < class TYPE >
 Matrix < TYPE >&  Matrix< TYPE >::operator= (const Matrix < TYPE > &rhs)
 {
+    
     if (this == &rhs)
     {
         return *this;
@@ -257,92 +260,41 @@ Matrix < TYPE >&  Matrix< TYPE >::operator= (const Matrix < TYPE > &rhs)
     return *this;
 }
 
-//template < class V, class U >
-//void resize( Matrix < V >& Target, const int newStringNumber,const int newColumnNumber, const U typeIdentificator )
-//{
-//    U** TempOuter;
-//    U* TempInner;
-//
-//    assert(Target.value != NULL);
-//    TempOuter = static_cast< U** > ( malloc(sizeof(U*) * newStringNumber) );
-//    assert(TempOuter != NULL);
-//
-//    for (int i = 0; i < newStringNumber; i++)
-//    {
-//        if (i < Target.StringNumber)
-//        {
-//            assert(Target.value[i] != NULL);
-//            TempInner = static_cast< U* > ( malloc(sizeof(U) * newColumnNumber) );
-//            assert(TempInner != NULL);
-//            TempOuter[i] = TempInner;
-//        }
-//        else
-//        {
-//            TempInner = static_cast< U* > ( malloc(sizeof(U) * newColumnNumber) );
-//            assert(TempInner != NULL);
-//            TempOuter[i] = TempInner;
-//        }
-//    }
-//
-//
-//    for (int i = 0; i < Target.StringNumber; i++)
-//    {
-//        for (int j = 0; j < Target.ColumnNumber; j++)
-//        {
-//            TempOuter[i][j] = static_cast< U >( Target.value[i][j] );
-//        }
-//    }
-//
-//    for(int i = 0; i < Target.StringNumber; i++)
-//    {
-//        free(Target.value[i]);
-//    }
-//    free(Target.value);
-//
-//    Target.value = TempOuter;
-//    for (int i = 0; i < newStringNumber; i++)
-//    {
-//        Target.value[i] = TempOuter[i];
-//    }
-//
-//    for (int i = 0; i < newStringNumber; i++)
-//    {
-//        for (int j = 0; j < newColumnNumber; j++)
-//        {
-//            if ( (i >= Target.StringNumber) || (j>= Target.ColumnNumber) )
-//            {
-//                Target.value[i][j] = 0;
-//            }
-//        }
-//    }
-//
-//    Target.ColumnNumber = newColumnNumber;
-//    Target.StringNumber = newStringNumber;
-//}
-
 template < class V >
 void resize( Matrix < V >& Target, const int newStringNumber,const int newColumnNumber )
 {
     V** TempOuter;
     V* TempInner;
     
-    assert(Target.value != NULL);
     TempOuter = static_cast< V** > ( realloc(Target.value, sizeof(V*) * newStringNumber) );
-    assert(TempOuter != NULL);
+    
+    if (TempOuter == NULL)
+    {
+        cout << "[RESIZE] malloc was not succeeded\n";
+        throw runtime_error("[RESIZE] malloc was not succeeded\n");
+    }
+    
     Target.value = TempOuter;
     for (int i = 0; i < newStringNumber; i++)
     {
         if (i < Target.StringNumber)
         {
-            assert(Target.value[i] != NULL);
             TempInner = static_cast< V* > ( realloc(Target.value[i], sizeof(V) * newColumnNumber) );
-            assert(TempInner != NULL);
+            if ((TempInner==NULL) || (TempOuter==NULL))
+            {
+                cout << "[RESIZE] malloc was not succeeded\n";
+                throw runtime_error("[RESIZE] malloc was not succeeded\n");
+            }
             Target.value[i] = TempInner;
         }
         else
         {
             TempInner = static_cast< V* > ( malloc(sizeof(V) * newColumnNumber) );
-            assert(TempInner != NULL);
+            if ((TempInner==NULL) || (TempOuter==NULL))
+            {
+                cout << "[RESIZE] malloc was not succeeded\n";
+                throw runtime_error("[RESIZE] malloc was not succeeded\n");
+            }
             Target.value[i] = TempInner;
         }
     }
@@ -362,37 +314,46 @@ void resize( Matrix < V >& Target, const int newStringNumber,const int newColumn
     Target.StringNumber = newStringNumber;
 }
 
-///тут проблема с тем, что левый аргумент + тоже меняется
-///как будто оператор унарный
+
 template < class TYPE >
-Matrix < TYPE >& Matrix < TYPE >::operator + (const Matrix < TYPE > &rhs)
+Matrix < TYPE > Matrix < TYPE >::operator + (const Matrix < TYPE > &rhs)
 {
-    for (int i = 0; i < rhs.StringNumber; i++)
+    if ((rhs.StringNumber != (this->StringNumber)) || (rhs.ColumnNumber != (this->ColumnNumber)))
     {
-        for (int j = 0; j < rhs.ColumnNumber; j++)
-        {
-            this->value[i][j] += rhs.value[i][j];
-        }
+        cout << "[OPERATOR+] Not valid size\n";
+        throw runtime_error("[OPERATOR+] Not valid size\n");
     }
-    return *this;
+    
+    Matrix < TYPE > Result(rhs.StringNumber, rhs.ColumnNumber);
+    Result = *this;
+    Result += rhs;
+    return Result;
 }
 
 template < class TYPE >
-Matrix < TYPE >& Matrix < TYPE >::operator - (const Matrix < TYPE > &rhs)
+Matrix < TYPE > Matrix < TYPE >::operator - (const Matrix < TYPE > &rhs)
 {
-    for (int i = 0; i < rhs.StringNumber; i++)
+    if ((rhs.StringNumber != (this->StringNumber)) || (rhs.ColumnNumber != (this->ColumnNumber)))
     {
-        for (int j = 0; j < rhs.ColumnNumber; j++)
-        {
-            this->value[i][j] -= rhs.value[i][j];
-        }
+        cout << "[OPERATOR-] Not valid size\n";
+        throw runtime_error("[OPERATOR-] Not valid size\n");
     }
-    return *this;
+    
+    Matrix < TYPE > Result(rhs.StringNumber, rhs.ColumnNumber);
+    Result = *this;
+    Result -= rhs;
+    return Result;
 }
 
 template < class TYPE >
 Matrix < TYPE >& Matrix < TYPE >::operator += (const Matrix < TYPE > &rhs)
 {
+    if ((rhs.StringNumber != (this->StringNumber)) || (rhs.ColumnNumber != (this->ColumnNumber)))
+    {
+        cout << "[OPERATOR+=] Not valid size\n";
+        throw runtime_error("[OPERATOR+=] Not valid size\n");
+    }
+    
     for (int i = 0; i < rhs.StringNumber; i++)
     {
         for (int j = 0; j < rhs.ColumnNumber; j++)
@@ -406,6 +367,12 @@ Matrix < TYPE >& Matrix < TYPE >::operator += (const Matrix < TYPE > &rhs)
 template < class TYPE >
 Matrix < TYPE >& Matrix < TYPE >::operator -= (const Matrix < TYPE > &rhs)
 {
+    if ((rhs.StringNumber != (this->StringNumber)) || (rhs.ColumnNumber != (this->ColumnNumber)))
+    {
+        cout << "[OPERATOR-=] Not valid size\n";
+        throw runtime_error("[OPERATOR-=] Not valid size\n");
+    }
+    
     for (int i = 0; i < rhs.StringNumber; i++)
     {
         for (int j = 0; j < rhs.ColumnNumber; j++)
@@ -436,11 +403,10 @@ inline void transpose4x4_SSE(Matrix < V >& Target, Matrix < V >& Result, int lda
 template < class V >
 inline void transpose2Arg(Matrix < V >& Target, Matrix < V >& Result)
 {
-    ///Тут опять же исключение
     if (&Target == &Result)
     {
         cout << "[TRANSPOSITION]Invalid usage\n";
-        assert(&Target != &Result);
+        throw runtime_error("[TRANSPOSITION]Invalid usage\n");
         return;
     }
     
@@ -493,18 +459,30 @@ inline void transpose1Arg(Matrix < V >& Target)
     Target = Temp;
 }
 
-///такая же проблема, как у +
-///наверное нужно передавать переменную для результата?
 template < class TYPE >
-Matrix< TYPE >& Matrix< TYPE >::operator*(Matrix < TYPE >& rhs)
+Matrix< TYPE > Matrix< TYPE >::operator*(Matrix < TYPE >& rhs)
 {
-    if (this->ColumnNumber == rhs.StringNumber)
+    if (this->ColumnNumber != rhs.StringNumber)
     {
-        ///тут надо обработать ошибку
-        assert(this->ColumnNumber == rhs.StringNumber);
-        //return static_cast<Matrix< TYPE >&> (0);
+        cout << "[OPERATOR*] Not valid size\n";
+        throw runtime_error("[OPERATOR*] Not valid size\n");
     }
     
+    Matrix < TYPE > Result(this->StringNumber, rhs.ColumnNumber);
+    Result = *this;
+    Result *= rhs;
+    return Result;
+}
+
+
+template < class TYPE >
+Matrix < TYPE >& Matrix < TYPE >::operator *= (Matrix < TYPE > &rhs)
+{
+    if (this->ColumnNumber != rhs.StringNumber)
+    {
+        cout << "[OPERATOR*=] Not valid size\n";
+        throw runtime_error("[OPERATOR*=] Not valid size\n");
+    }
     Matrix < TYPE > Temp(this->StringNumber, rhs.ColumnNumber);
     
     transpose1Arg(rhs);
@@ -525,13 +503,6 @@ Matrix< TYPE >& Matrix< TYPE >::operator*(Matrix < TYPE >& rhs)
     *this = Temp;
     
     return *this;
-}
-
-
-template < class TYPE >
-Matrix < TYPE >& Matrix < TYPE >::operator *= (Matrix < TYPE > &rhs)
-{
-    return (*this * rhs);
 }
 
 template < class TYPE >
@@ -573,7 +544,7 @@ double Matrix < TYPE >::determinant()
     if (this->StringNumber != this->ColumnNumber)
     {
         cout << "[DETERMINANT] Sizes are not equal\n";
-        assert(this->StringNumber != this->ColumnNumber);
+        throw runtime_error("[DETERMINANT] Sizes are not equal\n");
         return -1;
     }
     
@@ -624,7 +595,8 @@ double Matrix < TYPE >::determinant()
 template < class TYPE >
 Matrix < TYPE >& Matrix < TYPE >::upTriangle()
 {
-    ///тут проверка на double
+    static_assert(is_floating_point<TYPE>::value,
+                  "[UPTRIANGLE] Only floating point types avaliable\n");
     
     int i, j, k = 0;
     int countSwaps = 1;
@@ -642,21 +614,6 @@ Matrix < TYPE >& Matrix < TYPE >::upTriangle()
             swap (this->value[i][k], this->value[iMax][k]);
         countSwaps = - countSwaps * (i != iMax ? 1 : - 1);
         
-        //  вычитаем текущую строку из всех остальных
-//        for (j = i + 1; j < this->StringNumber; ++j)
-//        {
-//            int q = - this->value[j][i];
-//            int koeff = this->value[i][i];
-//            //домножаем обрабатываемую строку на первый элемент первой строки (та, которую хотим занулить)
-//            for (k = i; k < this->ColumnNumber; k++)
-//            {
-//                this->value[j][k] *= koeff;
-//            }
-//            //вычитаем из обрабатываемой строки первую, умноженную на первый элемент обрабатываемой строки
-//            //k -- итератор столбцов
-//            for (k = this->ColumnNumber - 1; k >= i; --k)
-//                this->value[j][k] += q * this->value[i][k];
-//        }
         for (j = i + 1; j < this->StringNumber; ++ j)
         {
             double q = - this->value[j][i] / this->value[i][i];
@@ -666,7 +623,6 @@ Matrix < TYPE >& Matrix < TYPE >::upTriangle()
     }
     
     // умножаем матрицу на -1, если мы сделали  нечётное количество перестановок строк
-    // в итоге определитель результирующей матрицы  будет равен определителю начальной матрицы
     *this = *this * static_cast<double>(countSwaps);
     return this->makeBeautiful();
 }
@@ -688,12 +644,12 @@ Matrix < TYPE >& Matrix<TYPE>::operator * (double operand)
 template < class TYPE >
 Matrix < TYPE >& Matrix < TYPE >::makeBeautiful()
 {
-    double eps = 1e-6;
+    //double eps = 1e-6;
     for (int i = 0; i < this->StringNumber; i++)
     {
         for (int j = 0; j < this->ColumnNumber; j++)
         {
-            if (abs(this->value[i][j]) < eps)
+            if (abs(this->value[i][j]) < EPS)
             {
                 this->value[i][j] = 0;
             }
@@ -711,8 +667,10 @@ Matrix < TYPE >& Matrix<TYPE>::operator *= (double operand)
 template < class TYPE >
 void Matrix< TYPE >::gauss(double* results)
 {
+    static_assert(is_floating_point<TYPE>::value,
+                  "[gauss] Only floating point types avaliable\n");
+    
     int i, j = 0;
-    double eps = 1e-6;
     this->upTriangle();
     results[this->StringNumber-1] =
     (this->value[this->ColumnNumber-2][this->ColumnNumber-1]) / (this->value[this->ColumnNumber-2][this->StringNumber-1]);
@@ -721,11 +679,11 @@ void Matrix< TYPE >::gauss(double* results)
         results[i] = this->value[i][this->StringNumber];
         for ( j = i+1; j < this->StringNumber; j++)
         {
-            results[i]-=this->value[i][j] * results[j];
+            results[i] -= this->value[i][j] * results[j];
         }
         results[i] /= this->value[i][i];
         
-        if (abs(results[i]) < eps)
+        if (abs(results[i]) < EPS)
         {
             results[i] = 0;
         }
