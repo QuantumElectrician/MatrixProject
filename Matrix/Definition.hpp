@@ -54,7 +54,8 @@ public:
     
     //not released
     template < class V, class U >
-    friend void resize( Matrix < V >& Target, const int newStringNumber,const int newColumnNumber, const U typeIdentificator );
+    friend void resize( Matrix < V >& Target, const int newStringNumber,const int newColumnNumber,
+                       const U typeIdentificator );
     
     template < class V >
     friend void resize(Matrix < V >& Target, const int newStringNumber,const int newColumnNumber);

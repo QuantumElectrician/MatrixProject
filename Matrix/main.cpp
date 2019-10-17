@@ -57,7 +57,6 @@ int main(int argc, const char * argv[])
     setValue(10, 2, 3, Result);
     
     cout << "Original matrix: \n"<< MyMatrix1 << "Transposed matrix: \n" << MyMatrix1.eraseColums(1, 1);
-
     
 //    vector<int> local;
 //    local = Result.isZeroString();
