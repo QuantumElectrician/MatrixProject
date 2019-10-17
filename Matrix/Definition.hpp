@@ -93,7 +93,8 @@ public:
     Matrix < TYPE >& concate(const Matrix < TYPE >& rhs);
     Matrix < TYPE >& invert();
     Matrix < TYPE > eraseColums (int index1, int index2);
-    Matrix < TYPE >& copy( Matrix< TYPE >& From );
+    Matrix < TYPE >& copy(Matrix< TYPE >& From);
+    bool isE ();
     
     
 private:
@@ -877,3 +878,36 @@ Matrix < TYPE >& Matrix < TYPE >::copy( Matrix< TYPE >& From )
     *this = From;
     return *this;
 }
+
+template < class TYPE >
+bool Matrix< TYPE >::isE ()
+{
+    if (this->ColumnNumber!=this->StringNumber)
+    {
+        return false;
+    }
+    
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        if (this->value[i][i] != 1)
+        {
+            return false;
+        }
+    }
+    
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        for (int j = 0; j < this->ColumnNumber; j++)
+        {
+            if (i != j)
+            {
+                if (this->value[i][j] != 0)
+                {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+

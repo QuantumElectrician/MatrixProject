@@ -48,10 +48,10 @@ int main(int argc, const char * argv[])
     
     for (int i = 1; i <= SIZE; i++)
     {
-        for (int j = 1; j <= SIZE; j++)
-        {
-            setValue(i*j, i, j, Result);
-        }
+        //for (int j = 1; j <= SIZE; j++)
+        //{
+            setValue(1, i, i+1, Result);
+        //}
     }
     
     setValue(10, 1, 1, MyMatrix);
@@ -68,9 +68,9 @@ int main(int argc, const char * argv[])
 //    cout << MyMatrix1;
 //    cout << MyMatrix.concate(MyMatrix1);
     
-    MyMatrix1 = MyMatrix;
-    cout << MyMatrix1;
-    cout << (MyMatrix.invert().makeBeautiful() * MyMatrix1).makeBeautiful();
+//    MyMatrix1 = MyMatrix;
+//    cout << MyMatrix1;
+//    cout << (MyMatrix.invert().makeBeautiful() * MyMatrix1).makeBeautiful();
     
 //    double results[3];
 //    cout << MyMatrix1;
@@ -84,14 +84,14 @@ int main(int argc, const char * argv[])
     //cout << "UpTriangle MyMatrix: \n" << MyMatrix.diag().makeBeautiful();
     //cout << "det MyMatrix = " << MyMatrix.determinantFloatingPoint() << "\n";
     
-//    if (MyMatrix1 == MyMatrix)
-//    {
-//        cout << "TRUE\n";
-//    }
-//    else
-//    {
-//        cout << "FALSE\n";
-//    }
+    if (Result.isE())
+    {
+        cout << "TRUE\n";
+    }
+    else
+    {
+        cout << "FALSE\n";
+    }
     
     //MyMatrix = MyMatrix1;
     //transpose1Arg(MyMatrix1);
