@@ -59,10 +59,6 @@ public:
     template < class V >
     friend void resize(Matrix < V >& Target, const int newStringNumber,const int newColumnNumber);
     
-    //Service funtion
-    template < class V >
-    friend inline void transpose4x4_SSE(Matrix < V >& Target, Matrix < V >& Result,
-                                         int lda, int ldb, int costyl1, int costyl2);
     template < class V >
     friend inline void transpose2Arg(Matrix < V >& Target, Matrix < V >& Result);
     
@@ -95,6 +91,8 @@ public:
     Matrix < TYPE > eraseColums (int index1, int index2);
     Matrix < TYPE >& copy(Matrix< TYPE >& From);
     bool isE ();
+    bool isZero();
+    int* isZeroString();
     
     
 private:
@@ -102,7 +100,12 @@ private:
     int ColumnNumber;
     TYPE** value;
     constexpr const static double EPS = 1e-5;
+    
     double determinantTrianglNotSafe();
+    //Service funtion
+    template < class V >
+    friend inline void transpose4x4_SSE(Matrix < V >& Target, Matrix < V >& Result,
+                                        int lda, int ldb, int costyl1, int costyl2);
 };
 
 
@@ -905,6 +908,22 @@ bool Matrix< TYPE >::isE ()
                 {
                     return false;
                 }
+            }
+        }
+    }
+    return true;
+}
+
+template < class TYPE >
+bool Matrix< TYPE >::isZero()
+{
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        for (int j = 0; j < this->ColumnNumber; j++)
+        {
+            if (this->value[i][j] != 0)
+            {
+                return false;
             }
         }
     }

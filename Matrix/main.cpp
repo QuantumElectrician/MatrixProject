@@ -25,7 +25,7 @@ int main(int argc, const char * argv[])
     const int SIZE = 3;
     //создание матриц
     Matrix<TYPE> MyMatrix(SIZE,SIZE);
-    Matrix<TYPE> MyMatrix1(SIZE,SIZE+1);
+    Matrix<TYPE> MyMatrix1(SIZE,SIZE);
     Matrix<TYPE> Result(SIZE,SIZE);
     // присвоение матрице значений одним действием {{1,2},{3,4},{5,6},{7,8}}
     //cin >> MyMatrix;
@@ -46,15 +46,15 @@ int main(int argc, const char * argv[])
         }
     }
     
-    for (int i = 1; i <= SIZE; i++)
-    {
-        //for (int j = 1; j <= SIZE; j++)
-        //{
-            setValue(1, i, i+1, Result);
-        //}
-    }
+//    for (int i = 1; i <= SIZE; i++)
+//    {
+//        //for (int j = 1; j <= SIZE; j++)
+//        //{
+//            setValue(1, i, i+1, Result);
+//        //}
+//    }
     
-    setValue(10, 1, 1, MyMatrix);
+    setValue(10, 2, 3, MyMatrix);
     
 //    cout << MyMatrix1 << Result;
 //    MyMatrix = MyMatrix1 + Result;
@@ -84,19 +84,19 @@ int main(int argc, const char * argv[])
     //cout << "UpTriangle MyMatrix: \n" << MyMatrix.diag().makeBeautiful();
     //cout << "det MyMatrix = " << MyMatrix.determinantFloatingPoint() << "\n";
     
-    if (Result.isE())
-    {
-        cout << "TRUE\n";
-    }
-    else
-    {
-        cout << "FALSE\n";
-    }
+//    if (Result.isE())
+//    {
+//        cout << "TRUE\n";
+//    }
+//    else
+//    {
+//        cout << "FALSE\n";
+//    }
     
-    //MyMatrix = MyMatrix1;
-    //transpose1Arg(MyMatrix1);
-    //transpose2Arg(MyMatrix, MyMatrix);
-    //cout << "Original matrix: \n"<< MyMatrix1 << "Transposed matrix: \n" << MyMatrix;
+    MyMatrix1 = MyMatrix;
+    transpose1Arg(MyMatrix);
+    //transpose2Arg(MyMatrix, MyMatrix1);
+    cout << "Original matrix: \n"<< MyMatrix1 << "Transposed matrix: \n" << MyMatrix;
     
     //cout << Transpose(MyMatrix);
     

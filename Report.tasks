@@ -1,6 +1,6 @@
 www.viva64.com/en/w	1	err	Help: The documentation for all analyzer warnings is available here: https://www.viva64.com/en/w/.
-/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/Definition.hpp	289	warn	V560 A part of conditional expression is always false: (TempOuter == __null).
-/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/Definition.hpp	299	warn	V560 A part of conditional expression is always false: (TempOuter == __null).
+/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/Definition.hpp	290	warn	V560 A part of conditional expression is always false: (TempOuter == __null).
+/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/Definition.hpp	300	warn	V560 A part of conditional expression is always false: (TempOuter == __null).
 /Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/main.cpp	126	err	V749 Destructor of the 'MyMatrix1' object will be invoked a second time after leaving the object's scope.
 /Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/main.cpp	127	err	V749 Destructor of the 'Result' object will be invoked a second time after leaving the object's scope.
 /Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/main.cpp	128	err	V749 Destructor of the 'MyMatrix' object will be invoked a second time after leaving the object's scope.
