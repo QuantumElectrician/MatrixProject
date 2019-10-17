@@ -24,7 +24,7 @@ int main(int argc, const char * argv[])
 {
     const int SIZE = 3;
     //создание матриц
-    Matrix<TYPE> MyMatrix(SIZE,SIZE);
+    Matrix<TYPE> MyMatrix(SIZE,SIZE+1);
     Matrix<TYPE> MyMatrix1(SIZE,SIZE);
     Matrix<TYPE> Result(SIZE,SIZE);
     // присвоение матрице значений одним действием {{1,2},{3,4},{5,6},{7,8}}
@@ -32,7 +32,7 @@ int main(int argc, const char * argv[])
     
     for (int i = 1; i <= SIZE; i++)
     {
-        for (int j = 1; j <= SIZE; j++)
+        for (int j = 1; j <= SIZE+1; j++)
         {
             setValue(i+j, i, j, MyMatrix);
         }
@@ -54,9 +54,9 @@ int main(int argc, const char * argv[])
         }
     }
     
-    setValue(10, 2, 3, Result);
+    setValue(10, 2, 1, MyMatrix);
     
-    cout << "Original matrix: \n"<< MyMatrix1 << "Transposed matrix: \n" << MyMatrix1.eraseColums(1, 1);
+ //   cout << "Original matrix: \n"<< MyMatrix1 << "Transposed matrix: \n" << MyMatrix1.eraseColums(1, 1);
     
 //    vector<int> local;
 //    local = Result.isZeroString();
@@ -79,14 +79,15 @@ int main(int argc, const char * argv[])
 //    cout << MyMatrix1;
 //    cout << (MyMatrix.invert().makeBeautiful() * MyMatrix1).makeBeautiful();
     
-//    double results[3];
-//    cout << MyMatrix1;
-//    MyMatrix1.gauss(results);
-//    cout << "RESULTS: \n";
-//    for (auto index : results)
-//    {
-//        cout << index << "\n";
-//    }
+    vector<TYPE> a(3,0);
+    cout << MyMatrix;
+    a = MyMatrix.gauss();
+    //MyMatrix.gauss(results);
+    cout << "RESULTS: \n";
+    for (auto index : a)
+    {
+        cout << index << "\n";
+    }
     //cout << MyMatrix;
     //cout << "UpTriangle MyMatrix: \n" << MyMatrix.diag().makeBeautiful();
     //cout << "det MyMatrix = " << MyMatrix.determinantFloatingPoint() << "\n";

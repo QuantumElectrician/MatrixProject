@@ -86,7 +86,7 @@ public:
     Matrix < TYPE >& operator *= (double operand);
     Matrix < TYPE >& diag();
     Matrix < TYPE >& makeBeautiful();
-    void gauss(double* results);
+    vector < TYPE > gauss();
     Matrix < TYPE >& concate(const Matrix < TYPE >& rhs);
     Matrix < TYPE >& invert();
     Matrix < TYPE > eraseColums (int index1, int index2);
@@ -724,14 +724,50 @@ Matrix < TYPE >& Matrix<TYPE>::operator *= (double operand)
 {
     return (*this * operand);
 }
+//ДОПИЛЕНО, но есть более новая версия (ниже)
+//template < class TYPE >
+//void Matrix< TYPE >::gauss(double* results)
+//{
+//    static_assert(is_floating_point<TYPE>::value,
+//                  "[GAUSS] Only floating point types avaliable\n");
+//
+//    int i, j = 0;
+//    this->upTriangle();
+//
+//    //проверяем определитель исходной матрицы
+//    double localDet = this->determinantTrianglNotSafe();
+//    if (localDet == 0)
+//    {
+//        cout << "[GAUSS] Unsuccesful: degenerate core matrix ";
+//        throw runtime_error("[GAUSS] Unsuccesful: degenerate core matrix ");
+//    }
+//
+//    results[this->StringNumber-1] =
+//    (this->value[this->ColumnNumber-2][this->ColumnNumber-1]) / (this->value[this->ColumnNumber-2][this->StringNumber-1]);
+//    for (i = this->StringNumber - 2; i >= 0; i--)
+//    {
+//        results[i] = this->value[i][this->StringNumber];
+//        for ( j = i+1; j < this->StringNumber; j++)
+//        {
+//            results[i] -= this->value[i][j] * results[j];
+//        }
+//        results[i] /= this->value[i][i];
+//
+//        if (abs(results[i]) < EPS)
+//        {
+//            results[i] = 0;
+//        }
+//    }
+//}
 
 template < class TYPE >
-void Matrix< TYPE >::gauss(double* results)
+vector< TYPE > Matrix< TYPE >::gauss()
 {
     static_assert(is_floating_point<TYPE>::value,
                   "[GAUSS] Only floating point types avaliable\n");
     
     int i, j = 0;
+    vector < TYPE > results (this->StringNumber, 0);
     this->upTriangle();
     
     //проверяем определитель исходной матрицы
@@ -752,12 +788,13 @@ void Matrix< TYPE >::gauss(double* results)
             results[i] -= this->value[i][j] * results[j];
         }
         results[i] /= this->value[i][i];
-
+        
         if (abs(results[i]) < EPS)
         {
             results[i] = 0;
         }
     }
+    return results;
 }
 
 template < class TYPE >
