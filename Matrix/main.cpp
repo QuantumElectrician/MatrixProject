@@ -50,16 +50,19 @@ int main(int argc, const char * argv[])
     {
         for (int j = 1; j <= SIZE; j++)
         {
-            setValue(0, i, j, Result);
+            setValue(i+j, i, j, Result);
         }
     }
     
     setValue(10, 2, 3, Result);
     
-    vector<int> local;
-    local = Result.isZeroString();
-    for (auto i : local)
-        cout << i << " ";
+    cout << "Original matrix: \n"<< MyMatrix1 << "Transposed matrix: \n" << MyMatrix1.eraseColums(1, 1);
+
+    
+//    vector<int> local;
+//    local = Result.isZeroString();
+//    for (auto i : local)
+//        cout << i << " ";
     
 //    cout << MyMatrix1 << Result;
 //    MyMatrix = MyMatrix1 + Result;

@@ -89,6 +89,7 @@ public:
     Matrix < TYPE >& concate(const Matrix < TYPE >& rhs);
     Matrix < TYPE >& invert();
     Matrix < TYPE > eraseColums (int index1, int index2);
+    Matrix < TYPE > eraseStrings (int index1, int index2);
     Matrix < TYPE >& copy(Matrix< TYPE >& From);
     bool isE ();
     bool isZero();
@@ -864,6 +865,17 @@ Matrix < TYPE > Matrix < TYPE >::eraseColums (int index1, int index2)
     for (int j = index2 + 1; j < this->ColumnNumber; ++ j)
         for (int i = 0; i < this->StringNumber; ++ i)
             Temp.value[i][j - index2 - 1 + index1] = this->value[i][j];
+    return Temp;
+}
+
+template < class TYPE >
+Matrix < TYPE > Matrix < TYPE >::eraseStrings (int index1, int index2)
+{
+    Matrix < TYPE > Temp(this->StringNumber, this->ColumnNumber);
+    Temp.copy(*this);
+    transpose1Arg(Temp);
+    Temp.eraseColums(index1, index2);
+    transpose1Arg(Temp);
     return Temp;
 }
 
