@@ -46,15 +46,20 @@ int main(int argc, const char * argv[])
         }
     }
     
-//    for (int i = 1; i <= SIZE; i++)
-//    {
-//        //for (int j = 1; j <= SIZE; j++)
-//        //{
-//            setValue(1, i, i+1, Result);
-//        //}
-//    }
+    for (int i = 1; i <= SIZE; i++)
+    {
+        for (int j = 1; j <= SIZE; j++)
+        {
+            setValue(0, i, j, Result);
+        }
+    }
     
-    setValue(10, 2, 3, MyMatrix);
+    setValue(10, 2, 3, Result);
+    
+    vector<int> local;
+    local = Result.isZeroString();
+    for (auto i : local)
+        cout << i << " ";
     
 //    cout << MyMatrix1 << Result;
 //    MyMatrix = MyMatrix1 + Result;
@@ -93,11 +98,11 @@ int main(int argc, const char * argv[])
 //        cout << "FALSE\n";
 //    }
     
-    MyMatrix1 = MyMatrix;
-    transpose1Arg(MyMatrix);
-    //transpose2Arg(MyMatrix, MyMatrix1);
-    cout << "Original matrix: \n"<< MyMatrix1 << "Transposed matrix: \n" << MyMatrix;
-    
+//    MyMatrix1 = MyMatrix;
+//    transpose1Arg(MyMatrix);
+//    //transpose2Arg(MyMatrix, MyMatrix1);
+//    cout << "Original matrix: \n"<< MyMatrix1 << "Transposed matrix: \n" << MyMatrix;
+//
     //cout << Transpose(MyMatrix);
     
     //MyMatrix = {{1,2},{3,4}};

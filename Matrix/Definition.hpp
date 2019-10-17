@@ -92,7 +92,10 @@ public:
     Matrix < TYPE >& copy(Matrix< TYPE >& From);
     bool isE ();
     bool isZero();
-    int* isZeroString();
+    vector<int> isZeroString();
+    bool checkZeroString(const int i);
+    vector<int> isZeroColumn();
+    bool checkZeroColumn(const int j);
     
     
 private:
@@ -925,6 +928,60 @@ bool Matrix< TYPE >::isZero()
             {
                 return false;
             }
+        }
+    }
+    return true;
+}
+
+template < class TYPE >
+vector<int> Matrix<TYPE>::isZeroString()
+{
+    vector<int> results;
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        if (this->checkZeroString(i))
+        {
+            results.push_back(i);
+        }
+    }
+    return results;
+}
+
+template < class TYPE >
+bool Matrix<TYPE>::checkZeroString(const int i)
+{
+    for (int j = 0; j < this->ColumnNumber; j++)
+    {
+        if (this->value[i][j] != 0)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+template < class TYPE >
+vector<int> Matrix<TYPE>::isZeroColumn()
+{
+    vector<int> results;
+    for (int i = 0; i < this->ColumnNumber; i++)
+    {
+        if (this->checkZeroColumn(i))
+        {
+            results.push_back(i);
+        }
+    }
+    return results;
+}
+
+template < class TYPE >
+bool Matrix<TYPE>::checkZeroColumn(const int j)
+{
+    for (int i = 0; i < this->StringNumber; i++)
+    {
+        if (this->value[i][j] != 0)
+        {
+            return false;
         }
     }
     return true;
