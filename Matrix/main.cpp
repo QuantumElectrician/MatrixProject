@@ -32,7 +32,7 @@ int main(int argc, const char * argv[])
     
     for (int i = 1; i <= SIZE; i++)
     {
-        for (int j = 1; j <= SIZE+1; j++)
+        for (int j = 1; j <= SIZE; j++)
         {
             setValue(i+j, i, j, MyMatrix);
         }
@@ -46,11 +46,11 @@ int main(int argc, const char * argv[])
         }
     }
     
-    for (int i = 1; i <= SIZE; i++)
+    for (int i = 1; i <= SIZE+1; i++)
     {
         for (int j = 1; j <= SIZE; j++)
         {
-            setValue(i+j, i, j, Result);
+            setValue(1, i, i, Result);
         }
     }
     
@@ -80,8 +80,9 @@ int main(int argc, const char * argv[])
 //    cout << (MyMatrix.invert().makeBeautiful() * MyMatrix1).makeBeautiful();
     
     vector<TYPE> a(3,0);
-    cout << MyMatrix;
-    a = MyMatrix.gauss();
+    //double results[3];
+    cout << Result;
+    a = Result.gauss();
     //MyMatrix.gauss(results);
     cout << "RESULTS: \n";
     for (auto index : a)

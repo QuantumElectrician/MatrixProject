@@ -177,10 +177,15 @@ TYPE Matrix < TYPE > :: getValue(const int &String, const int &Column) const
 }
 
 template < class V, class U >
-void setValue(const U &new_value, const int &String, const int &Column,
+void setValue(const U &new_value, const int &string, const int &column,
               Matrix < V > &Target)
 {
-    Target.value[String-1][Column-1] = static_cast<V>(new_value);
+    if (string-1 >= Target.StringNumber)
+    {
+        cout << "[SET_VALUE] Out of range\n";
+        throw runtime_error("[SET_VALUE] Out of range\n");
+    }
+    Target.value[string-1][column-1] = static_cast<V>(new_value);
 }
 
 template < class V >
