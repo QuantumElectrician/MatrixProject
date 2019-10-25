@@ -27,6 +27,9 @@
 #define ROUND_UP(x, s) (((x)+((s)-1)) & -(s))
 #define THREAD_NUMBER 10
 
+//Unless otherwise specified, method changes an original matrix
+//Unless otherwise specified, string/column numeration starts from 0
+
 using namespace std;
 
 template < class TYPE >
@@ -64,9 +67,11 @@ public:
     friend void resize( Matrix < V >& Target, const int newStringNumber,const int newColumnNumber,
                        const U typeIdentificator );
     
+    //that's just a friend, not a class method
     template < class V >
     friend void resize(Matrix < V >& Target, const int newStringNumber,const int newColumnNumber);
     
+    //ATTENTION: original matrix does not change
     template < class V >
     friend inline void transpose2Arg(Matrix < V >& Target, Matrix < V >& Result);
     
@@ -81,30 +86,31 @@ public:
     Matrix < TYPE >& operator -= (const Matrix < TYPE > &rhs);
     Matrix < TYPE > operator * (Matrix < TYPE > &rhs);
     Matrix < TYPE >& operator *= (Matrix < TYPE > &rhs);
+    Matrix < TYPE >& operator * (double operand);
+    Matrix < TYPE >& operator *= (double operand);
     bool operator == (const Matrix < TYPE > &rhs) const;
     bool operator != (const Matrix < TYPE > &rhs) const;
     TYPE* operator[] (const int index);
+    
 
-    double determinantInt();
-    double determinantFloatingPoint();
-    double determinantTriangl();
+    double determinantInt();                                  //ATTENTION: original matrix does not change
+    double determinantFloatingPoint();                        //ATTENTION: original matrix does not change
+    double determinantTriangl();                              //ATTENTION: original matrix does not change
     Matrix < TYPE >& upTriangle();
-    Matrix < TYPE >& operator * (double operand);
-    Matrix < TYPE >& operator *= (double operand);
     Matrix < TYPE >& diag();
     Matrix < TYPE >& makeBeautiful();
-    vector < TYPE > gauss();
+    vector < TYPE > gauss();                                  //ATTENTION: original matrix does not change
     Matrix < TYPE >& concate(const Matrix < TYPE >& rhs);
     Matrix < TYPE >& invert();
-    Matrix < TYPE > eraseColums (int index1, int index2);
-    Matrix < TYPE > eraseStrings (int index1, int index2);
+    Matrix < TYPE > eraseColums (int index1, int index2);     //ATTENTION: original matrix does not change
+    Matrix < TYPE > eraseStrings (int index1, int index2);    //ATTENTION: original matrix does not change
     Matrix < TYPE >& copy(Matrix< TYPE >& From);
-    bool isE ();
-    bool isZero();
-    vector<int> isZeroString();
-    bool checkZeroString(const int i);
-    vector<int> isZeroColumn();
-    bool checkZeroColumn(const int j);
+    bool isE ();                                              //ATTENTION: original matrix does not change
+    bool isZero();                                            //ATTENTION: original matrix does not change
+    vector<int> isZeroString();                               //ATTENTION: original matrix does not change
+    bool checkZeroString(const int i);                        //ATTENTION: original matrix does not change
+    vector<int> isZeroColumn();                               //ATTENTION: original matrix does not change
+    bool checkZeroColumn(const int j);                        //ATTENTION: original matrix does not change
     
     
 private:
