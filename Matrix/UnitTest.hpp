@@ -1,28 +1,29 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
 //
-//  main.cpp
+//  UnitTest.hpp
 //  Matrix
 //
-//  Created by Владислав Агафонов on 19/09/2019.
+//  Created by Владислав Агафонов on 24/10/2019.
 //  Copyright © 2019 Владислав Агафонов. All rights reserved.
 //
 
+#pragma once
+
 #include <iostream>
 #include <vector>
-#include <string>
-
 #include "Definition.hpp"
-#include "UnitTest.hpp"
 
 using namespace std;
 
-int main(int argc, const char * argv[])
+class Tests
 {
-    Tests MyTest;
-    MyTest.TestsOperator();
-    MyTest.TestsFunctions();
-    return 0;
-}
+    
+public:
+    Tests() {};
+    void TestsOperator();
+    void TestsFunctions();
+};
+
+

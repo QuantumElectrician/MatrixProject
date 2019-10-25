@@ -1,5 +1,5 @@
 all:
-	gcc main.cpp Definition.hpp Definition.cpp
+	gcc main.cpp Definition.hpp Definition.cpp -fopenmp
 analyse:
 	xcodebuild | xcpretty -r json-compilation-database
 	pvs-studio-analyzer analyze -f build/reports/compilation_db.json

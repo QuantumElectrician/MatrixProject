@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F4243BD323594E8C0082B9E8 /* libomp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F4243BD223594E8C0082B9E8 /* libomp.dylib */; };
+		F43E5B7F2361FF6500BD71BD /* UnitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43E5B7D2361FF6500BD71BD /* UnitTest.cpp */; };
 		F4CB37A823340E6E00176AEF /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4CB37A723340E6E00176AEF /* main.cpp */; };
 		F4CB37B02334147800176AEF /* Definition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4CB37AE2334147800176AEF /* Definition.cpp */; };
 /* End PBXBuildFile section */
@@ -24,6 +26,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F4243BD223594E8C0082B9E8 /* libomp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libomp.dylib; path = ../../../../../usr/local/Cellar/llvm/9.0.0/lib/libomp.dylib; sourceTree = "<group>"; };
+		F43E5B7D2361FF6500BD71BD /* UnitTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnitTest.cpp; sourceTree = "<group>"; };
+		F43E5B7E2361FF6500BD71BD /* UnitTest.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = UnitTest.hpp; sourceTree = "<group>"; };
 		F4CB37A423340E6E00176AEF /* Matrix */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Matrix; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4CB37A723340E6E00176AEF /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		F4CB37AE2334147800176AEF /* Definition.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Definition.cpp; sourceTree = "<group>"; };
@@ -35,17 +40,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4243BD323594E8C0082B9E8 /* libomp.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F4243BD123594E8C0082B9E8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F4243BD223594E8C0082B9E8 /* libomp.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		F4CB379B23340E6E00176AEF = {
 			isa = PBXGroup;
 			children = (
 				F4CB37A623340E6E00176AEF /* Matrix */,
 				F4CB37A523340E6E00176AEF /* Products */,
+				F4243BD123594E8C0082B9E8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -61,6 +76,8 @@
 			isa = PBXGroup;
 			children = (
 				F4CB37A723340E6E00176AEF /* main.cpp */,
+				F43E5B7D2361FF6500BD71BD /* UnitTest.cpp */,
+				F43E5B7E2361FF6500BD71BD /* UnitTest.hpp */,
 				F4CB37AE2334147800176AEF /* Definition.cpp */,
 				F4CB37AF2334147800176AEF /* Definition.hpp */,
 			);
@@ -124,6 +141,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4CB37B02334147800176AEF /* Definition.cpp in Sources */,
+				F43E5B7F2361FF6500BD71BD /* UnitTest.cpp in Sources */,
 				F4CB37A823340E6E00176AEF /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -245,7 +263,17 @@
 		F4CB37AC23340E6E00176AEF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CC = /usr/local/opt/llvm/bin/clang;
+				CLANG_ENABLE_MODULES = NO;
 				CODE_SIGN_STYLE = Automatic;
+				COMPILER_INDEX_STORE_ENABLE = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
+				HEADER_SEARCH_PATHS = /usr/local/opt/llvm/lib/clang/9.0.0/include;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/opt/llvm/lib,
+					/usr/local/Cellar/llvm/9.0.0/lib,
+				);
+				OTHER_CFLAGS = "-fopenmp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -253,7 +281,17 @@
 		F4CB37AD23340E6E00176AEF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CC = /usr/local/opt/llvm/bin/clang;
+				CLANG_ENABLE_MODULES = NO;
 				CODE_SIGN_STYLE = Automatic;
+				COMPILER_INDEX_STORE_ENABLE = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
+				HEADER_SEARCH_PATHS = /usr/local/opt/llvm/lib/clang/9.0.0/include;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/opt/llvm/lib,
+					/usr/local/Cellar/llvm/9.0.0/lib,
+				);
+				OTHER_CFLAGS = "-fopenmp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

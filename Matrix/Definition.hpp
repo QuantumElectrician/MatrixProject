@@ -22,8 +22,10 @@
 #include <x86intrin.h>
 #include <cmath>
 #include <exception>
+#include "omp.h"
 
 #define ROUND_UP(x, s) (((x)+((s)-1)) & -(s))
+#define THREAD_NUMBER 10
 
 using namespace std;
 
@@ -37,8 +39,13 @@ public:
     ~Matrix();
     
     TYPE** getPointer() const;
+    
+    //user-friendly function
+    //starts string and column numeration from 1 (NOT FROM 0)
     TYPE getValue(const int &String,const int &Column) const;
     
+    //user-friendly function
+    //starts string and column numeration from 1 (NOT FROM 0)
     template < class V, class U >
     friend void setValue(const U &new_value,
                          const int &String, const int &Column,
@@ -106,8 +113,9 @@ private:
     TYPE** value;
     constexpr const static double EPS = 1e-5;
     
+    //Service funtions
     double determinantTrianglNotSafe();
-    //Service funtion
+
     template < class V >
     friend inline void transpose4x4_SSE(Matrix < V >& Target, Matrix < V >& Result,
                                         int lda, int ldb, int costyl1, int costyl2);
@@ -126,9 +134,11 @@ Matrix < TYPE > :: Matrix(const int &StringNumberToWrite, const int &ColumnNumbe
 {
     StringNumber = StringNumberToWrite;
     ColumnNumber = ColumnNumberToWrite;
-    // динамическое создание массива
+    //динамическое создание массива
     value = new TYPE * [StringNumber];
     assert(value != NULL);
+    
+    #pragma omp parallel for
     for (int i = 0; i < StringNumber; i++)
     {
         value[i] = new TYPE [ColumnNumber];
@@ -137,6 +147,7 @@ Matrix < TYPE > :: Matrix(const int &StringNumberToWrite, const int &ColumnNumbe
     //cout << "[CONSTRUCTOR]Memory allocated\n";
     
     //инициализация нулями
+    #pragma omp parallel for collapse(2)
     for (int i = 0; i < StringNumber; i++)
     {
         for (int j = 0; j < ColumnNumber; j++)
@@ -150,6 +161,7 @@ Matrix < TYPE > :: Matrix(const int &StringNumberToWrite, const int &ColumnNumbe
 template < class TYPE >
 Matrix < TYPE > :: ~Matrix()
 {
+#pragma omp parallel for
     for(int i = 0; i < StringNumber; i++)
     {
         free(value[i]);
@@ -158,7 +170,7 @@ Matrix < TYPE > :: ~Matrix()
     {
         free(value);
     }
-    cout << "\n[DESTRUCTOR] Destructed\n";
+    //cout << "\n[DESTRUCTOR] Destructed\n";
     
     StringNumber = 0;
     ColumnNumber = 0;
@@ -173,7 +185,7 @@ TYPE** Matrix < TYPE > :: getPointer() const
 template < class TYPE >
 TYPE Matrix < TYPE > :: getValue(const int &String, const int &Column) const
 {
-    return value[String][Column];
+    return value[String-1][Column-1];
 }
 
 template < class V, class U >
@@ -214,7 +226,7 @@ ostream& operator<<(ostream& os, const Matrix < V >& Target)
         }
         os << "\n";
     }
-    os << "\n-------------------\n";
+    os << "-------------------\n";
     return os;
 }
 
@@ -269,6 +281,7 @@ Matrix < TYPE >&  Matrix< TYPE >::operator= (const Matrix < TYPE > &rhs)
     
     resize(*this, rhs.StringNumber, rhs.ColumnNumber);
     
+    #pragma omp parallel for collapse(2)
     for (int i = 0; i < rhs.StringNumber; i++)
     {
         for (int j = 0; j < rhs.ColumnNumber; j++)
@@ -300,7 +313,7 @@ void resize( Matrix < V >& Target, const int newStringNumber,const int newColumn
         if (i < Target.StringNumber)
         {
             TempInner = static_cast< V* > ( realloc(Target.value[i], sizeof(V) * newColumnNumber) );
-            if ((TempInner==NULL) || (TempOuter==NULL))
+            if (TempInner==NULL)
             {
                 cout << "[RESIZE] malloc was not succeeded\n";
                 throw runtime_error("[RESIZE] malloc was not succeeded\n");
@@ -310,7 +323,7 @@ void resize( Matrix < V >& Target, const int newStringNumber,const int newColumn
         else
         {
             TempInner = static_cast< V* > ( malloc(sizeof(V) * newColumnNumber) );
-            if ((TempInner==NULL) || (TempOuter==NULL))
+            if (TempInner==NULL)
             {
                 cout << "[RESIZE] malloc was not succeeded\n";
                 throw runtime_error("[RESIZE] malloc was not succeeded\n");
@@ -319,6 +332,7 @@ void resize( Matrix < V >& Target, const int newStringNumber,const int newColumn
         }
     }
     
+    #pragma omp parallel for collapse(2)
     for (int i = 0; i < newStringNumber; i++)
     {
         for (int j = 0; j < newColumnNumber; j++)
@@ -374,6 +388,7 @@ Matrix < TYPE >& Matrix < TYPE >::operator += (const Matrix < TYPE > &rhs)
         throw runtime_error("[OPERATOR+=] Not valid size\n");
     }
     
+    #pragma omp parallel for collapse(2)
     for (int i = 0; i < rhs.StringNumber; i++)
     {
         for (int j = 0; j < rhs.ColumnNumber; j++)
@@ -393,6 +408,7 @@ Matrix < TYPE >& Matrix < TYPE >::operator -= (const Matrix < TYPE > &rhs)
         throw runtime_error("[OPERATOR-=] Not valid size\n");
     }
     
+    #pragma omp parallel for collapse(2)
     for (int i = 0; i < rhs.StringNumber; i++)
     {
         for (int j = 0; j < rhs.ColumnNumber; j++)
@@ -430,7 +446,6 @@ inline void transpose2Arg(Matrix < V >& Target, Matrix < V >& Result)
         return;
     }
     
-#pragma omp parallel for
     const int originalStringNumber = Target.StringNumber;
     const int originalColumnNumber = Target.ColumnNumber;
     int lda = ROUND_UP(originalStringNumber, 4);
@@ -450,10 +465,13 @@ inline void transpose2Arg(Matrix < V >& Target, Matrix < V >& Result)
     const int m = Target.ColumnNumber;
     
     const int block_size = 4;
-    
+    //omp_set_num_threads(5); // установить число потоков в 10
+    //omp_set_max_active_levels(4);//разрешить параллеливание вложенных циклов
+                   
+    #pragma omp parallel for
     for(int i = 0; i < n; i+=block_size)
     {
-        for(int j=0; j<m; j+=block_size)
+        for(int j=0; j < m; j+=block_size)
         {
             int max_i2 = i+block_size < n ? i + block_size : n;
             int max_j2 = j+block_size < m ? j + block_size : m;
@@ -465,10 +483,12 @@ inline void transpose2Arg(Matrix < V >& Target, Matrix < V >& Result)
                 }
             }
         }
+    //#pragma omp critical
+    //cout << "Greetings from thread "<< omp_get_thread_num() <<endl;
     }
     
     resize(Result, originalColumnNumber, originalStringNumber);
-    resize(Target, originalColumnNumber, originalStringNumber);
+    resize(Target, originalStringNumber, originalColumnNumber);
 }
 
 template < class V >
@@ -498,6 +518,9 @@ Matrix< TYPE > Matrix< TYPE >::operator*(Matrix < TYPE >& rhs)
 template < class TYPE >
 Matrix < TYPE >& Matrix < TYPE >::operator *= (Matrix < TYPE > &rhs)
 {
+    //omp_set_dynamic(0);      // запретить библиотеке openmp менять число потоков во время исполнения
+    //omp_set_num_threads(10); // установить число потоков в 10
+
     if (this->ColumnNumber != rhs.StringNumber)
     {
         cout << "[OPERATOR*=] Not valid size\n";
@@ -507,6 +530,7 @@ Matrix < TYPE >& Matrix < TYPE >::operator *= (Matrix < TYPE > &rhs)
     
     transpose1Arg(rhs);
     
+#pragma omp parallel for collapse(2)
     for (int i = 0; i < Temp.StringNumber; i++)
     {
         for (int j = 0; j < Temp.ColumnNumber; j++)
@@ -533,6 +557,7 @@ bool Matrix < TYPE >::operator == (const Matrix < TYPE > &rhs) const
         return false;
     }
     
+    //#pragma omp parallel for collapse(2)
     for (int i = 0; i < this->StringNumber; i++)
     {
         for (int j = 0; j < this->ColumnNumber; j++)
@@ -586,27 +611,29 @@ double Matrix < TYPE >::determinantInt()
     else
     {
         Matrix < TYPE > Temp(size-1, size-1);
+        #pragma omp parallel for
         for(i = 0; i < size; ++i)
         {
             for(j = 0; j < size-1; ++j)
             {
                 if (j < i)
                 {
+                    #pragma omp parallel for private(i,j)
                     for (int k = 0; k < size - 1; k++)
                     {
                         Temp.value[j][k] = this->value[j][k];
                     }
                 }
-                    //Temp.value[j] = Target.value[j];
                 else
                 {
+                    #pragma omp parallel for private(i,j)
                     for (int k = 0; k < size - 1; k++)
                     {
                         Temp.value[j][k] = this->value[j+1][k];
                     }
                 }
-                    //Temp.value[j] = Target.value[j+1];
             }
+            #pragma omp critical
             det += pow((double)-1, (i+j)) * Temp.determinantInt() * (this->value[i][size-1]);
         }
         Temp.~Matrix<TYPE>();
@@ -688,8 +715,17 @@ Matrix < TYPE >& Matrix < TYPE >::upTriangle()
                 this->value[j][k] += q * this->value[i][k];
         }
     }
-    
     // умножаем матрицу на -1, если мы сделали  нечётное количество перестановок строк
+    // нужно учесть число строк (столбцов): если их четное, то определитель не сменит знак
+    if ( (this->StringNumber % 2 == 0) && (countSwaps == -1) )
+    {
+        for (int j = 0; j < this->ColumnNumber; j++)
+        {
+            this->value[this->StringNumber-1][j] *= -1;
+        }
+        return this->makeBeautiful();
+    }
+    
     *this = *this * static_cast<double>(countSwaps);
     return this->makeBeautiful();
 }
@@ -697,6 +733,7 @@ Matrix < TYPE >& Matrix < TYPE >::upTriangle()
 template < class TYPE >
 Matrix < TYPE >& Matrix<TYPE>::operator * (double operand)
 {
+#pragma omp parallel for collapse(2)
     for (int i = 0; i < this->StringNumber; i++)
     {
         for (int j = 0; j < this->ColumnNumber; j++)
@@ -711,6 +748,7 @@ Matrix < TYPE >& Matrix<TYPE>::operator * (double operand)
 template < class TYPE >
 Matrix < TYPE >& Matrix < TYPE >::makeBeautiful()
 {
+#pragma omp parallel for collapse(2)
     for (int i = 0; i < this->StringNumber; i++)
     {
         for (int j = 0; j < this->ColumnNumber; j++)
@@ -785,6 +823,7 @@ vector< TYPE > Matrix< TYPE >::gauss()
     
     results[this->StringNumber-1] =
     (this->value[this->ColumnNumber-2][this->ColumnNumber-1]) / (this->value[this->ColumnNumber-2][this->StringNumber-1]);
+    
     for (i = this->StringNumber - 2; i >= 0; i--)
     {
         results[i] = this->value[i][this->StringNumber];
@@ -836,6 +875,7 @@ Matrix < TYPE >& Matrix < TYPE >::concate(const Matrix < TYPE >& rhs)
     int newColumnNumber = this->ColumnNumber + rhs.ColumnNumber;
     resize(*this, this->StringNumber, newColumnNumber);
     
+#pragma omp parallel for collapse(2)
     for (int i = 0; i < this->StringNumber; i++)
     {
         for (int j = 0; j < rhs.ColumnNumber; j++)
@@ -860,6 +900,7 @@ Matrix < TYPE >& Matrix< TYPE >::invert()
     
     //делаем единичную
     Matrix < TYPE > E(this->StringNumber, this->StringNumber);
+#pragma omp parallel for
     for (int i = 0; i < this->StringNumber; i++)
     {
         setValue(1, i+1, i+1, E);
@@ -887,6 +928,7 @@ Matrix < TYPE >& Matrix< TYPE >::invert()
 
     resize(*this, Temp.StringNumber, Temp.ColumnNumber - E.ColumnNumber);
     //cout << "[INVERT]:\n" << Temp;
+#pragma omp parallel for collapse(2)
     for (int i = 0; i < E.StringNumber; i++)
     {
         for (int j = 0; j < E.ColumnNumber; j++)
@@ -902,9 +944,11 @@ template < class TYPE >
 Matrix < TYPE > Matrix < TYPE >::eraseColums (int index1, int index2)
 {
     Matrix < TYPE > Temp(this->StringNumber, this->ColumnNumber - (index2 - index1 + 1));
+#pragma omp parallel for collapse(2)
     for (int j = 0; j < index1; ++j)
         for (int i = 0; i < this->StringNumber; ++ i)
             Temp.value[i][j] = this->value[i][j];
+#pragma omp parallel for collapse(2)
     for (int j = index2 + 1; j < this->ColumnNumber; ++ j)
         for (int i = 0; i < this->StringNumber; ++ i)
             Temp.value[i][j - index2 - 1 + index1] = this->value[i][j];
@@ -917,7 +961,7 @@ Matrix < TYPE > Matrix < TYPE >::eraseStrings (int index1, int index2)
     Matrix < TYPE > Temp(this->StringNumber, this->ColumnNumber);
     Temp.copy(*this);
     transpose1Arg(Temp);
-    Temp.eraseColums(index1, index2);
+    Temp = Temp.eraseColums(index1, index2);
     transpose1Arg(Temp);
     return Temp;
 }

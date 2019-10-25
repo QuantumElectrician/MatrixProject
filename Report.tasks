@@ -1,6 +1,25 @@
 www.viva64.com/en/w	1	err	Help: The documentation for all analyzer warnings is available here: https://www.viva64.com/en/w/.
-/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/Definition.hpp	298	warn	V560 A part of conditional expression is always false: (TempOuter == __null).
-/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/Definition.hpp	308	warn	V560 A part of conditional expression is always false: (TempOuter == __null).
-/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/main.cpp	134	err	V749 Destructor of the 'MyMatrix1' object will be invoked a second time after leaving the object's scope.
-/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/main.cpp	135	err	V749 Destructor of the 'Result' object will be invoked a second time after leaving the object's scope.
-/Users/vladislavagafonov/Documents/Xcode/Matrix/Matrix/main.cpp	136	err	V749 Destructor of the 'MyMatrix' object will be invoked a second time after leaving the object's scope.
+/usr/local/opt/llvm/lib/clang/9.0.0/include/stdarg.h	14	warn	V677 Custom declaration of a standard 'va_list' type. The declaration from system header files should be used instead.
+/usr/local/opt/llvm/lib/clang/9.0.0/include/stddef.h	35	warn	V677 Custom declaration of a standard 'ptrdiff_t' type. The declaration from system header files should be used instead.
+/usr/local/opt/llvm/include/c++/v1/memory	2091	warn	V794 The assignment operator should be protected from the case of 'this == &__p'.
+/usr/local/opt/llvm/include/c++/v1/memory	2511	warn	V794 The assignment operator should be protected from the case of 'this == &__u'.
+/usr/local/opt/llvm/include/c++/v1/memory	3942	err	V530 The return value of function 'release' is required to be utilized.
+/usr/local/opt/llvm/include/c++/v1/algorithm	3893	err	V530 The return value of function 'release' is required to be utilized.
+/usr/local/opt/llvm/include/c++/v1/algorithm	4580	err	V530 The return value of function 'release' is required to be utilized.
+/usr/local/opt/llvm/include/c++/v1/algorithm	4587	err	V530 The return value of function 'release' is required to be utilized.
+/usr/local/opt/llvm/include/c++/v1/algorithm	4671	err	V530 The return value of function 'release' is required to be utilized.
+/usr/local/opt/llvm/include/c++/v1/string_view	293	err	V521 Such expressions using the ',' operator are dangerous. Make sure the expression '((void) 0), __data[0]' is correct.
+/usr/local/opt/llvm/include/c++/v1/string_view	293	err	V685 Consider inspecting the return statement. The expression contains a comma.
+/usr/local/opt/llvm/include/c++/v1/string_view	299	err	V521 Such expressions using the ',' operator are dangerous. Make sure the expression '((void) 0), __data[__size - 1]' is correct.
+/usr/local/opt/llvm/include/c++/v1/string_view	299	err	V685 Consider inspecting the return statement. The expression contains a comma.
+/usr/local/opt/llvm/include/c++/v1/string	3816	warn	V547 Expression 'data() == 0' is always false.
+/usr/local/opt/llvm/include/c++/v1/locale	1978	warn	V560 A part of conditional expression is always true: 69 <= __t.
+/usr/local/opt/llvm/include/c++/v1/locale	4201	err	V595 The '__cv_' pointer was utilized before it was verified against nullptr. Check lines: 4201, 4202.
+/usr/local/opt/llvm/include/c++/v1/bitset	383	err	V654 The condition of loop is always false.
+/usr/local/opt/llvm/include/c++/v1/bitset	383	err	V621 Consider inspecting the 'for' operator. It's possible that the loop will be executed incorrectly or won't be executed at all.
+/usr/local/opt/llvm/include/c++/v1/bitset	928	warn	V1001 The 'r' variable is assigned but is not used by the end of the function.
+/usr/local/opt/llvm/include/c++/v1/istream	823	warn	V547 Expression '__n > 0' is always true.
+/usr/local/opt/llvm/include/c++/v1/istream	1222	warn	V1001 The '__state' variable is assigned but is not used by the end of the function.
+/usr/local/opt/llvm/include/c++/v1/__split_buffer	394	warn	V794 The assignment operator should be protected from the case of 'this == &__c'.
+/usr/local/opt/llvm/include/c++/v1/functional	2090	err	V730 Not all members of a class are initialized inside the constructor. Consider inspecting: __buf_.
+/usr/local/opt/llvm/include/c++/v1/functional	1748	err	V730 Not all members of a class are initialized inside the constructor. Consider inspecting: __buf_.
