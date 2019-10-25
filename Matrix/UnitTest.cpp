@@ -192,15 +192,6 @@ void Tests::TestsFunctions()
     
     //invert check
     resize(MyFloatMatrixSq, 2, 2);
-        //matrix reinitialization
-    for (int i = 1; i <= 2; i++)
-    {
-        for (int j = 1; j <= 2; j++)
-        {
-            setValue(i+2*j, i, j, MyFloatMatrixSq);
-        }
-    }
-    setValue(10, 2, 1, MyFloatMatrixSq);
     MyFloatMatrixSq.invert();
     assert ( (abs(MyFloatMatrixSq.getValue(1,1) + 0.1875) < EPS )&&(abs(MyFloatMatrixSq.getValue(1,2) - 0.15625) < EPS )&&
             (abs(MyFloatMatrixSq.getValue(2,1) - 0.3125) < EPS )&&(abs(MyFloatMatrixSq.getValue(2,2) + 0.09375) < EPS )

@@ -811,7 +811,10 @@ vector< TYPE > Matrix< TYPE >::gauss()
     
     int i, j = 0;
     vector < TYPE > results (this->StringNumber, 0);
-    this->upTriangle();
+    Matrix < TYPE > Temp(1,1);
+    Temp.copy(*this);
+    
+    Temp.upTriangle();
     
     //проверяем определитель исходной матрицы
     double localDet = this->determinantTrianglNotSafe();
@@ -821,17 +824,17 @@ vector< TYPE > Matrix< TYPE >::gauss()
         throw runtime_error("[GAUSS] Unsuccesful: degenerate core matrix ");
     }
     
-    results[this->StringNumber-1] =
-    (this->value[this->ColumnNumber-2][this->ColumnNumber-1]) / (this->value[this->ColumnNumber-2][this->StringNumber-1]);
+    results[Temp.StringNumber-1] =
+    (Temp.value[Temp.ColumnNumber-2][Temp.ColumnNumber-1]) / (Temp.value[Temp.ColumnNumber-2][Temp.StringNumber-1]);
     
-    for (i = this->StringNumber - 2; i >= 0; i--)
+    for (i = Temp.StringNumber - 2; i >= 0; i--)
     {
-        results[i] = this->value[i][this->StringNumber];
-        for ( j = i+1; j < this->StringNumber; j++)
+        results[i] = Temp.value[i][Temp.StringNumber];
+        for ( j = i+1; j < Temp.StringNumber; j++)
         {
-            results[i] -= this->value[i][j] * results[j];
+            results[i] -= Temp.value[i][j] * results[j];
         }
-        results[i] /= this->value[i][i];
+        results[i] /= Temp.value[i][i];
         
         if (abs(results[i]) < EPS)
         {
